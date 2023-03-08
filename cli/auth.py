@@ -35,8 +35,9 @@ def login(curs, args):
             return
         curs.execute("COMMIT")
         curs.execute("UPDATE Users SET lastAccessedDate = NOW() WHERE username = '%s';" % username)
-        user_name = username
+        # user_name = username
         print("Login successful")
+        return username
         # print(curs.fetchall())
     except Exception as e:
         print(e)

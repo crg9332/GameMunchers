@@ -15,7 +15,7 @@ load_dotenv()
 username_ssh = os.getenv('SSH_USERNAME')
 password = os.getenv('PASSWORD')
 dbName = os.getenv('DB_NAME')
-user_name = None
+user_name = None # global variable to store username of logged in user (possibly a temporary solution)
 
 try:
     with SSHTunnelForwarder(
@@ -53,7 +53,9 @@ try:
             if command.startswith('login'):
                 args = command.split(' ')[1:]
                 curs = conn.cursor()
-                login(curs, args)
+                output = login(curs, args)
+                if output is not None:
+                    user_name = output
                 curs.close()
                 continue
             # curs.execute(command)
