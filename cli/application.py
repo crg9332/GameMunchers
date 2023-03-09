@@ -60,7 +60,7 @@ try:
                 continue
             # curs.execute(command)
             # print(curs.fetchall())
-        curs.close()
+        # curs.close()
         conn.close()
         print("Database connection closed")
 except Exception as e:
