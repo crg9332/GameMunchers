@@ -68,6 +68,15 @@ try:
                 rate(curs, user_name, args)
                 curs.close()
                 continue
+            if command.startswith('play'):
+                args = command.split(' ')[1:]
+                curs = conn.cursor()
+                if user_name == None:
+                    print("Please login first.")
+                    continue
+                play(curs, user_name, args)
+                curs.close
+                continue
             # curs.execute(command)
             # print(curs.fetchall())
         # curs.close()
