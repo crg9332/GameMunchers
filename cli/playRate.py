@@ -12,27 +12,27 @@ def rate(curs, username, args):
         return
     try:
         # get the game id for game they are reviewing
-        curs.execute("SELECT gameid FROM games WHERE gameTitle = %s", game)
+        curs.execute("SELECT gameid FROM games WHERE gameTitle = %s", (game,))
         gameid = curs.fetchone()
         # check if game exists
         if len(gameid) == 0:
             print("Game does not exist")
             return
         # get the game id from users collection which checks if they own it
-        curs.execute("SELECT gameid FROM inCollection where gameid = %s AND username = %s", gameid[0], username)
+        curs.execute("SELECT gameid FROM inCollection where gameid = %s AND username = %s", (gameid[0], username))
         checkOwned = curs.fetchall()
         if len(checkOwned) == 0:
             print("Game is not owned")
             return
         # gets the rating if one already exists, if it doesn't exist it creates an entry else it updates
-        curs.execute("SELECT gameid FROM starrating where gameid = %s AND username = %s", gameid[0], username)
+        curs.execute("SELECT gameid FROM starrating where gameid = %s AND username = %s", (gameid[0], username))
         checkReviewed = curs.fetchall()
         if len(checkReviewed) == 0:
-            curs.exectue("INSERT INTO StarRating (username, gameID, starRating) VALUES (%s, %s, %s)", username, gameid[0], rate)
+            curs.exectue("INSERT INTO StarRating (username, gameID, starRating) VALUES (%s, %s, %s)", (username, gameid[0], rate))
             curs.execute("COMMIT")
             print("New rating done!")
             return
-        curs.execute("UPDATE starrating SET starrating = %s WHERE gameid = %s AND username = %s", rate, gameid[0], username)
+        curs.execute("UPDATE starrating SET starrating = %s WHERE gameid = %s AND username = %s", (rate, gameid[0], username))
         curs.execute("COMMIT")
         print("Rating updated!")
         return
