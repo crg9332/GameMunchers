@@ -6,7 +6,7 @@ def rate(curs, username, args):
         print("Rating must be a number ")
         return
     game = args[0]
-    rate = args[1]
+    rate = int(args[1]) # Cast to int in case user typed a floating point
     if rate < 0 or rate > 5:
         print("Rating must be in range 0-5")
         return
@@ -28,7 +28,7 @@ def rate(curs, username, args):
         curs.execute("SELECT gameid FROM starrating where gameid = %s AND username = %s", gameid[0], username)
         checkReviewed = curs.fetchall()
         if len(checkReviewed) == 0:
-            curs.exectue("INSERT INTO StarRating (username, gameID, starRating) VALUES (%s, %s, %s)", username, str(gameid[0]), str(rate))
+            curs.exectue("INSERT INTO StarRating (username, gameID, starRating) VALUES (%s, %s, %s)", username, gameid[0], rate)
             curs.execute("COMMIT")
             print("New rating done!")
             return
