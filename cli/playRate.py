@@ -74,6 +74,7 @@ def playRandom(curs, username):
 
         # Insert new game session into appropriate table
         curs.execute("INSERT INTO gamesession (username, gameid, startdatetime, enddatetime VALUES (%s, %s, %s, %s)", (username, randomGame[0], startDateTime, endDateTime))
+        curs.execute("COMMIT")
         output = "{0} has been played for {0} minutes!".format(gameTitle, timePlayed)
         print(output)
     except Exception as e:
@@ -100,6 +101,7 @@ def playChosen(curs, username, gameTitle):
 
         # Insert new game session into appropriate table
         curs.execute("INSERT INTO gamesession (username, gameid, startdatetime, enddatetime VALUES (%s, %s, %s, %s)", (username, gameId[0], startDateTime, endDateTime))
+        curs.execute("COMMIT")
         output = "{0} has been played for {0} minutes!".format(gameTitle, timePlayed)
         print(output)
     except Exception as e:
