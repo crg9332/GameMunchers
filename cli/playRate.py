@@ -1,6 +1,7 @@
 from random import *
 from datetime import datetime, timedelta, time
 
+# rate a game
 def rate(curs, username, args):
     if len(args) != 2:
         print("Usage: rate <game> <rating>")
@@ -44,7 +45,7 @@ def rate(curs, username, args):
         curs.execute("ROLLBACK")
 
 
-# Play random game from collection
+# Play random or chosen game from collection
 def play(curs, username, args):
     if len(args) != 1:
         print("Usage: play <gameTitle/random>")
@@ -100,7 +101,7 @@ def playChosen(curs, username, gameTitle):
         endDateTime = startDateTime + timedelta(minutes=timePlayed)
 
         # Insert new game session into appropriate table
-        curs.execute("INSERT INTO gamesession (username, gameid, startdatetime, enddatetime VALUES (%s, %s, %s, %s)", (username, gameId[0], startDateTime, endDateTime))
+        curs.execute("INSERT INTO gamesession (username, gameid, startdatetime, enddatetime) VALUES (%s, %s, %s, %s)", (username, gameId[0], startDateTime, endDateTime))
         curs.execute("COMMIT")
         output = "{0} has been played for {0} minutes!".format(gameTitle, timePlayed)
         print(output)
