@@ -9,6 +9,7 @@ from sshtunnel import SSHTunnelForwarder
 import os
 from dotenv import load_dotenv
 from auth import signup, login
+from friends import *
 
 load_dotenv()
 
@@ -58,6 +59,25 @@ try:
                     user_name = output
                 curs.close()
                 continue
+            if command.startswith('friend'):
+                args = command.split(' ')[1:]
+                curs = conn.cursor()
+                if user_name == None:
+                    print("Please login first!")
+                    continue
+                friend(curs, user_name, args)
+                curs.close
+                continue
+            if command.startswith('unfriend'):
+                args = command.split(' ')[1:]
+                curs = conn.cursor()
+                if user_name == None:
+                    print("Please login first!")
+                    continue
+                unfriend(curs, user_name, args)
+                curs.close
+                continue           
+
             # curs.execute(command)
             # print(curs.fetchall())
         # curs.close()
