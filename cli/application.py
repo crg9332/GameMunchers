@@ -10,6 +10,7 @@ import os
 from dotenv import load_dotenv
 from auth import signup, login
 from playRate import *
+from random import *
 
 load_dotenv()
 
@@ -34,7 +35,6 @@ try:
             'host': 'localhost',
             'port': server.local_bind_port
         }
-
         conn = psycopg2.connect(**params)
         # curs = conn.cursor()
         print("Database connection established")
@@ -79,8 +79,7 @@ try:
                 continue
             # curs.execute(command)
             # print(curs.fetchall())
-        # curs.close()
-        conn.close()
+        curs.close()
         print("Database connection closed")
 except Exception as e:
     print(e)

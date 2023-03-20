@@ -64,7 +64,7 @@ def playRandom(curs, username):
         
         # Get a random game id from previous query's results
         random.seed(None)
-        randomGame = gamesOwned[random.randint(0, len(gamesOwned))]
+        randomGame = gamesOwned[randint(0, len(gamesOwned))]
         curs.execute("SELECT gameTitle FROM games WHERE gameid = %s", (randomGame[0],))
         gameTitle = curs.fetchall()
 
@@ -87,7 +87,7 @@ def playRandom(curs, username):
 def playChosen(curs, username, gameTitle):
     try:
         # Get game id with the provided game title
-        curs.execute("SELECT gameid FROM games as g, incollection as in WHERE gameTitle = %s AND g.gameid = in.gameid AND in.username = %s", (gameTitle, username))
+        curs.execute("SELECT gameid FROM games as g, incollection as in WHERE g.gameTitle = %s AND g.gameid = in.gameid AND in.username = %s", (gameTitle, username))
         gameId = curs.fetchone()
 
         # Check if user owns given game
