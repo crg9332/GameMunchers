@@ -1,17 +1,14 @@
-from random import *
-from datetime import datetime, timedelta, time
+from random import randint, seed
+from datetime import datetime, timedelta
 
 # rate a game
-def rate(curs, username, args):
-    if len(args) != 2:
-        print("Usage: rate <game> <rating>")
+def rate(curs, username):
+    game = input("Enter the name of the game you want to rate: ")
+    rate = input("Enter the rating you want to give the game (0-5): ")
+    if not rate.isdigit():
+        print("Rating must be a number")
         return
-    args[1] = args[1][1:]
-    if not args[1].isdigit():
-        print("Rating must be a number ")
-        return
-    game = args[0]
-    rate = int(args[1]) # Cast to int in case user typed a floating point
+    rate = int(rate)
     if rate < 0 or rate > 5:
         print("Rating must be in range 0-5")
         return
@@ -21,7 +18,7 @@ def rate(curs, username, args):
         gameid = curs.fetchone()
         # check if game exists
         if gameid == None:
-            print("Game does not exist")
+            print(f"Game \"{game}\" does not exist")
             return
         # get the game id from users collection which checks if they own it
         curs.execute("SELECT gameid FROM inCollection where gameid = %s AND username = %s", (gameid[0], username))
@@ -36,16 +33,16 @@ def rate(curs, username, args):
         if len(checkReviewed) == 0:
             curs.execute("INSERT INTO StarRating (username, gameID, starRating) VALUES (%s, %s, %s)", (username, gameid[0], rate))
             curs.execute("COMMIT")
-            print("New rating done!")
+            print("Rating added!")
             return
-        curs.execute("UPDATE starrating SET starrating = %s WHERE gameid = %s AND username = %s", (rate, gameid[0], username))
+        curs.execute("UPDATE starrating SET starrating = %s, ratingdate = NOW() WHERE gameid = %s AND username = %s", (rate, gameid[0], username))
         curs.execute("COMMIT")
         print("Rating updated!")
         return
     except Exception as e:
         print(e)
         curs.execute("ROLLBACK")
-
+    return
 
 
 def playRandom(curs, username):
@@ -53,6 +50,11 @@ def playRandom(curs, username):
         # Get all games owned by user
         curs.execute("SELECT gameid FROM incollection WHERE username = %s", (username,))
         gamesOwned = curs.fetchall()
+
+        # Check if user owns any games
+        if len(gamesOwned) == 0:
+            print("You don't own any games!")
+            return
         
         # Get a random game id from previous query's results
         seed(None)
@@ -76,12 +78,16 @@ def playRandom(curs, username):
     return
 
 # Play chosen game from collection
-def playChosen(curs, username, args):
-    if len(args) != 2:
-        print("Usage: play <gameTitle>")
-        return
-    gameTitle = args[0]
+def playChosen(curs, username):
+    gameTitle = input("Enter the name of the game you want to play: ")
     try:
+        # Check if game exists
+        curs.execute("SELECT gameid FROM games WHERE gameTitle = %s", (gameTitle,))
+        gameId = curs.fetchone()
+        if gameId == None:
+            print("Game does not exist")
+            return
+
         # Get game id with the provided game title
         curs.execute("SELECT g.gameid FROM games as g, incollection as inc WHERE g.gameTitle = %s AND g.gameid = inc.gameid AND inc.username = %s", (gameTitle, username))
         gameId = curs.fetchone()
