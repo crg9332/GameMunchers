@@ -9,6 +9,7 @@ from sshtunnel import SSHTunnelForwarder
 import os
 from dotenv import load_dotenv
 from auth import signup, login
+from collection import *
 
 load_dotenv()
 
@@ -56,6 +57,23 @@ try:
                 output = login(curs, args)
                 if output is not None:
                     user_name = output
+                curs.close()
+                continue
+            if command.startswith('createCollection'):
+                args = command.split(' ')[1:]
+                curs = conn.cursor()
+                if user_name == None:
+                    print("Please login first.")
+                    continue
+                createCollection(curs, user_name, args)
+                curs.close()
+                continue
+            if command.startswith('seeCollection'):
+                curs = conn.cursor()
+                if user_name == None:
+                    print("Please login first.")
+                    continue
+                seeCollection(curs, user_name)
                 curs.close()
                 continue
             # curs.execute(command)
