@@ -30,7 +30,7 @@ def addToCollection(curs, username, args):
         #     print("Game is not owned")
         #     return
 
-        # get the id of the collection to add to
+        # get the id of the collection to add to TODO ask about uniqueness of collection name
         curs.execute("SELECT collectionid FROM collection WHERE collectionname = %s AND username = %s",
                      (collection, username))
         collectionid = curs.fetchone()
@@ -40,9 +40,9 @@ def addToCollection(curs, username, args):
             print("Collection does not exist for this user")
             return
 
-        # checks if the game is already in the collection
-        curs.execute("SELECT gameid FROM incollection WHERE gameid = %s AND collectionid = %s",
-                     (gameid[0], collectionid[0]))
+        # checks if the game is already in the collection TODO clarify weak entity rules
+        curs.execute("SELECT gameid FROM incollection WHERE gameid = %s AND collectionid = %s AND username = %s",
+                     (gameid[0], collectionid[0], username))
         checkInCollection = curs.fetchone()
         if len(checkInCollection) == 1:
             print("Game is already in collection")
@@ -93,16 +93,16 @@ def deleteFromCollection(curs, username, args):
             return
 
         # checks if the game is in the collection
-        curs.execute("SELECT gameid FROM incollection WHERE gameid = %s AND collectionid = %s",
-                     (gameid[0], collectionid[0]))
+        curs.execute("SELECT gameid FROM incollection WHERE gameid = %s AND collectionid = %s AND username = %s",
+                     (gameid[0], collectionid[0], username))
         checkInCollection = curs.fetchone()
         if len(checkInCollection) == 0:
             print("Game is not in the collection")
             return
 
         # deletes the game from the collection
-        curs.execute("DELETE FROM incollection WHERE gameid = %s AND collectionid = %s",
-                     (gameid[0], collectionid[0]))
+        curs.execute("DELETE FROM incollection WHERE gameid = %s AND collectionid = %s AND username = %s",
+                     (gameid[0], collectionid[0], username))
         curs.execute("COMMIT")
         print("Successfully deleted " + game + " from " + collection)
 
@@ -111,6 +111,30 @@ def deleteFromCollection(curs, username, args):
         curs.execute("ROLLBACK")
 
 def renameCollection(curs, username, args):
-    pass
+    if len(args) != 2:
+        print("Usage: rename <collection> <newName>")
+        return
+    oldName = args[0]
+    newName = args[1]
+
+    try:
+        # get the id of the collection to rename
+        curs.execute("SELECT collectionid FROM collection WHERE collectionname = %s AND username = %s",
+                     (oldName, username))
+        collectionid = curs.fetchone()
+
+        # checks if the user owns a collection of this name
+        if len(collectionid) == 0:
+            print("Collection does not exist for this user")
+            return
+
+        # renames collection
+        curs.execute("UPDATE collection SET collectionname = %s WHERE collectionid = %s and username = %s",
+                     (newName, collectionid[0], username))
+
+    except Exception as e:
+        print(e)
+        curs.execute("ROLLBACK")
+
 def deleteCollection(curs, username, args):
     pass
