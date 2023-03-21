@@ -12,6 +12,7 @@ from auth import signup, login
 from playRate import rate, playRandom, playChosen
 from friends import friend, unfriend
 from collection import createCollection, viewCollections
+from modifyACollection import *
 
 load_dotenv()
 
@@ -141,6 +142,27 @@ try:
                 viewCollections(curs, user_name)
                 curs.close()
                 continue
+            if command.startswith('addGameToCollection'):
+                args = command.split(' ')[1:]
+                curs = conn.cursor()
+                if user_name == None:
+                    print("Please login first.")
+                    continue
+                addToCollection(curs, user_name, args)
+                curs.close()
+                continue
+            if command.startswith('deleteGameFromCollection'):
+                args = command.split(' ')[1:]
+                curs = conn.cursor()
+                if user_name == None:
+                    print("Please login first.")
+                    continue
+                deleteFromCollection(curs, user_name, args)
+                curs.close()
+                continue
+            # curs.execute(command)
+            # print(curs.fetchall())
+        # curs.close()
         conn.close()
         print("Database connection closed")
 except Exception as e:
