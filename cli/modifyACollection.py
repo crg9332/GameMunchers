@@ -42,7 +42,7 @@ def addToCollection(curs, username, args):
         # checks if the game is already in the collection
         curs.execute("SELECT gameid FROM incollection WHERE gameid = %s AND collectionid = %s",
                      (gameid[0], collectionid[0]))
-        checkInCollection = curs.fetcone()
+        checkInCollection = curs.fetchone()
         if len(checkInCollection) == 1:
             print("Game is already in collection")
             return
