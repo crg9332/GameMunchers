@@ -23,14 +23,7 @@ def addToCollection(curs, username, args):
             print("Game does not exist")
             return
 
-        # checks if user owns the game by checking all their collections TODO ask if this is necessary
-        # curs.execute("SELECT gameid FROM incollection where gameid = %s AND username = %s", (gameid[0], username))
-        # checkOwnsGame = curs.fetchall()
-        # if len(checkOwnsGame) == 0:
-        #     print("Game is not owned")
-        #     return
-
-        # get the id of the collection to add to TODO ask about uniqueness of collection name
+        # get the id of the collection to add to
         curs.execute("SELECT collectionid FROM collection WHERE collectionname = %s AND username = %s",
                      (collection, username))
         collectionid = curs.fetchone()
@@ -40,7 +33,7 @@ def addToCollection(curs, username, args):
             print("Collection does not exist for this user")
             return
 
-        # checks if the game is already in the collection TODO clarify weak entity rules
+        # checks if the game is already in the collection
         curs.execute("SELECT gameid FROM incollection WHERE gameid = %s AND collectionid = %s AND username = %s",
                      (gameid[0], collectionid[0], username))
         checkInCollection = curs.fetchone()
