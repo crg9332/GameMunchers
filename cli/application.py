@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 from auth import signup, login
 from playRate import rate, playRandom, playChosen
 from friends import friend, unfriend
+from collection import *
 
 load_dotenv()
 
@@ -122,6 +123,26 @@ try:
                 unfriend(curs, user_name)
                 curs.close
                 continue
+            if command.startswith('createCollection'):
+                args = command.split(' ')[1:]
+                curs = conn.cursor()
+                if user_name == None:
+                    print("Please login first.")
+                    continue
+                createCollection(curs, user_name, args)
+                curs.close()
+                continue
+            if command.startswith('seeCollection'):
+                curs = conn.cursor()
+                if user_name == None:
+                    print("Please login first.")
+                    continue
+                seeCollection(curs, user_name)
+                curs.close()
+                continue
+            # curs.execute(command)
+            # print(curs.fetchall())
+        # curs.close()
         conn.close()
         print("Database connection closed")
 except Exception as e:
