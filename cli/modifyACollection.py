@@ -112,7 +112,7 @@ def deleteFromCollection(curs, username, args):
 
 def renameCollection(curs, username, args):
     if len(args) != 2:
-        print("Usage: rename <collection> <newName>")
+        print("Usage: renameCollection <collection> <newName>")
         return
     oldName = args[0]
     newName = args[1]
@@ -131,10 +131,36 @@ def renameCollection(curs, username, args):
         # renames collection
         curs.execute("UPDATE collection SET collectionname = %s WHERE collectionid = %s and username = %s",
                      (newName, collectionid[0], username))
+        curs.execute("COMMIT")
+        print("Successfully renamed " + oldName + " to " + newName)
 
     except Exception as e:
         print(e)
         curs.execute("ROLLBACK")
 
 def deleteCollection(curs, username, args):
-    pass
+    if len(args) != 1:
+        print("Usage: deleteCollection <collection>")
+        return
+    collection = args[0]
+
+    try:
+        # get the id of the collection to delete
+        curs.execute("SELECT collectionid FROM collection WHERE collectionname = %s AND username = %s",
+                     (collection, username))
+        collectionid = curs.fetchone()
+
+        # checks if the user owns a collection of this name
+        if len(collectionid) == 0:
+            print("Collection does not exist for this user")
+            return
+
+        # deletes collection. should cascade for incollection
+        curs.execute("DELETE FROM collection WHERE collectionid = %s and username = %s",
+                     (collectionid[0], username))
+        curs.execute("COMMIT")
+        print("Successfully deleted " + collection)
+
+    except Exception as e:
+        print(e)
+        curs.execute("ROLLBACK")
