@@ -9,7 +9,7 @@ from sshtunnel import SSHTunnelForwarder
 import os
 from dotenv import load_dotenv
 from auth import signup, login
-from playRate import rate, playRandom, playChosen
+from games import rate, playRandom, playChosen
 from friends import friend, unfriend
 from collection import createCollection, viewCollections, renameCollection, deleteCollection, addToCollection, removeFromCollection
 
