@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 from auth import signup, login
 from playRate import rate, playRandom, playChosen
 from friends import friend, unfriend
-from collection import createCollection, seeCollections
+from collection import createCollection, viewCollections
 
 load_dotenv()
 
@@ -133,12 +133,12 @@ try:
                 createCollection(curs, user_name)
                 curs.close()
                 continue
-            elif command.startswith('seeCollections'):
+            elif command.startswith('viewCollections'):
                 if user_name == None:
                     print("Please login first.")
                     continue
                 curs = conn.cursor()
-                seeCollections(curs, user_name)
+                viewCollections(curs, user_name)
                 curs.close()
                 continue
         conn.close()

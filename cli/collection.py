@@ -17,8 +17,8 @@ def createCollection(curs, username):
         curs.execute("ROLLBACK")
     return
 
-# Sees list of collections for a user
-def seeCollections(curs, username):
+# Displays a list of collections for a user
+def viewCollections(curs, username):
     # gets all the collections from a given user in ascending alphabetical order of collection name
     try:
         curs.execute("SELECT collectionid, collectionname FROM collection WHERE username = %s ORDER BY collectionname", (username,))
