@@ -103,8 +103,8 @@ def viewCollections(curs, username):
             # counts all games for a single collection
             curs.execute("SELECT COUNT(gameid) FROM incollection WHERE collectionid = %s", (collectionID,))
             gameCount = curs.fetchone()
-            # gets the total time played in a collection
-            curs.execute("SELECT SUM(gs.timeplayed) FROM incollection as inc, gamesession as gs WHERE inc.collectionid = %s AND gs.gameid = inc.gameid", (collectionID,))
+            # gets the total time played in a collection for a given user
+            curs.execute("SELECT SUM(timeplayed) FROM gamesession WHERE gameid IN (SELECT gameid FROM incollection WHERE collectionid = %s) AND username = %s", (collectionID, username))
             totalPlayedSession = curs.fetchone()
             # prints out the collection info
             print("-"*50)
