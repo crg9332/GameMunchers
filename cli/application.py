@@ -9,7 +9,7 @@ from sshtunnel import SSHTunnelForwarder
 import os
 from dotenv import load_dotenv
 from auth import signup, login
-# from playRate import rate, playRandom, playChosen
+from playRate import rate, playRandom, playChosen
 from friends import friend, unfriend
 
 load_dotenv()
@@ -35,7 +35,6 @@ try:
             'host': 'localhost',
             'port': server.local_bind_port
         }
-
         conn = psycopg2.connect(**params)
         print("Database connection established")
         print("Input commands (quit to exit, help for help):")

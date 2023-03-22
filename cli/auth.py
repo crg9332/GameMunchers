@@ -20,7 +20,7 @@ def signup(curs):
     elif not match(r"[^@]+@[^@]+\.[^@]+", email):
         print("Invalid email")
         return
-    
+
     first_name = input("Enter first name (optional): ")
     last_name = input("Enter last name (optional): ")
     if first_name == "":
@@ -39,7 +39,7 @@ def signup(curs):
         if len(result) != 0:
             print("Email taken")
             return
-        
+
         curs.execute("INSERT INTO users (username, userpassword, email, firstName, lastName) VALUES (%s, %s, %s, %s, %s)", (username, password, email, first_name, last_name))
         curs.execute("COMMIT")
         print("User created")
