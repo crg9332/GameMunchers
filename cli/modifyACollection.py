@@ -6,22 +6,20 @@ description: Functions for adding and deleting a game from a collection, modifyi
             and deleting an entire collection
 """
 
-def addToCollection(curs, username, args):
-    if len(args) != 2:
-        print("Usage: addGameToCollection <game> <collection>")
-        return
-    game = args[0]
-    collection = args[1]
-
+def addToCollection(curs, username):
     try:
+        game = input("Enter the name of the game to add > ")
+
         # get the id of the game to add
         curs.execute("SELECT gameid FROM games WHERE gametitle = %s", (game,))
         gameid = curs.fetchone()
 
         # checks if the game exists
-        if len(gameid) == 0:
+        if gameid is None:
             print("Game does not exist")
             return
+
+        collection = input("Enter the name of the collection to add to > ")
 
         # get the id of the collection to add to
         curs.execute("SELECT collectionid FROM collection WHERE collectionname = %s AND username = %s",
@@ -29,7 +27,7 @@ def addToCollection(curs, username, args):
         collectionid = curs.fetchone()
 
         # checks if the user owns a collection of this name
-        if len(collectionid) == 0:
+        if collectionid is None:
             print("Collection does not exist for this user")
             return
 
@@ -37,7 +35,7 @@ def addToCollection(curs, username, args):
         curs.execute("SELECT gameid FROM incollection WHERE gameid = %s AND collectionid = %s AND username = %s",
                      (gameid[0], collectionid[0], username))
         checkInCollection = curs.fetchone()
-        if len(checkInCollection) == 1:
+        if checkInCollection is not None:
             print("Game is already in collection")
             return
 
@@ -58,22 +56,20 @@ def addToCollection(curs, username, args):
         print(e)
         curs.execute("ROLLBACK")
 
-def deleteFromCollection(curs, username, args):
-    if len(args) != 2:
-        print("Usage: deleteGameFromCollection <game> <collection>")
-        return
-    game = args[0]
-    collection = args[1]
-
+def deleteFromCollection(curs, username):
     try:
+        game = input("Enter the name of the game to delete > ")
+
         # get the id of the game to add
         curs.execute("SELECT gameid FROM games WHERE gametitle = %s", (game,))
         gameid = curs.fetchone()
 
         # checks if the game exists
-        if len(gameid) == 0:
+        if gameid is None:
             print("Game does not exist")
             return
+
+        collection = input("Enter the name of the collection to delete from > ")
 
         # get the id of the collection to delete from
         curs.execute("SELECT collectionid FROM collection WHERE collectionname = %s AND username = %s",
@@ -81,7 +77,7 @@ def deleteFromCollection(curs, username, args):
         collectionid = curs.fetchone()
 
         # checks if the user owns a collection of this name
-        if len(collectionid) == 0:
+        if collectionid is None:
             print("Collection does not exist for this user")
             return
 
@@ -89,7 +85,7 @@ def deleteFromCollection(curs, username, args):
         curs.execute("SELECT gameid FROM incollection WHERE gameid = %s AND collectionid = %s AND username = %s",
                      (gameid[0], collectionid[0], username))
         checkInCollection = curs.fetchone()
-        if len(checkInCollection) == 0:
+        if checkInCollection is None:
             print("Game is not in the collection")
             return
 
@@ -103,23 +99,21 @@ def deleteFromCollection(curs, username, args):
         print(e)
         curs.execute("ROLLBACK")
 
-def renameCollection(curs, username, args):
-    if len(args) != 2:
-        print("Usage: renameCollection <collection> <newName>")
-        return
-    oldName = args[0]
-    newName = args[1]
-
+def renameCollection(curs, username):
     try:
+        oldName = input("Enter the name of the collection to rename > ")
+
         # get the id of the collection to rename
         curs.execute("SELECT collectionid FROM collection WHERE collectionname = %s AND username = %s",
                      (oldName, username))
         collectionid = curs.fetchone()
 
         # checks if the user owns a collection of this name
-        if len(collectionid) == 0:
+        if collectionid is None:
             print("Collection does not exist for this user")
             return
+
+        newName = input("Enter new name for the collection > ")
 
         # renames collection
         curs.execute("UPDATE collection SET collectionname = %s WHERE collectionid = %s and username = %s",
@@ -131,20 +125,17 @@ def renameCollection(curs, username, args):
         print(e)
         curs.execute("ROLLBACK")
 
-def deleteCollection(curs, username, args):
-    if len(args) != 1:
-        print("Usage: deleteCollection <collection>")
-        return
-    collection = args[0]
-
+def deleteCollection(curs, username):
     try:
+        collection = input("Enter the name of the collection to delete > ")
+
         # get the id of the collection to delete
         curs.execute("SELECT collectionid FROM collection WHERE collectionname = %s AND username = %s",
                      (collection, username))
         collectionid = curs.fetchone()
 
         # checks if the user owns a collection of this name
-        if len(collectionid) == 0:
+        if collectionid is None:
             print("Collection does not exist for this user")
             return
 

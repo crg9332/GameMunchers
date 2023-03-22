@@ -144,20 +144,36 @@ try:
                 continue
             if command.startswith('addGameToCollection'):
                 args = command.split(' ')[1:]
+            if command.startswith('addToCollection'):
                 curs = conn.cursor()
                 if user_name == None:
                     print("Please login first.")
                     continue
-                addToCollection(curs, user_name, args)
+                addToCollection(curs, user_name)
                 curs.close()
                 continue
-            if command.startswith('deleteGameFromCollection'):
-                args = command.split(' ')[1:]
+            if command.startswith('deleteFromCollection'):
                 curs = conn.cursor()
                 if user_name == None:
                     print("Please login first.")
                     continue
-                deleteFromCollection(curs, user_name, args)
+                deleteFromCollection(curs, user_name)
+                curs.close()
+                continue
+            if command.startswith('renameCollection'):
+                curs = conn.cursor()
+                if user_name == None:
+                    print("Please login first.")
+                    continue
+                renameCollection(curs, user_name)
+                curs.close()
+                continue
+            if command.startswith('deleteCollection'):
+                curs = conn.cursor()
+                if user_name == None:
+                    print("Please login first.")
+                    continue
+                deleteCollection(curs, user_name)
                 curs.close()
                 continue
             # curs.execute(command)
