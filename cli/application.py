@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 from auth import signup, login
 from playRate import rate, playRandom, playChosen
 from friends import friend, unfriend
-from collection import createCollection, viewCollections
+from collection import createCollection, viewCollections, renameCollection, deleteCollection, addToCollection, removeFromCollection
 
 load_dotenv()
 
@@ -55,7 +55,11 @@ try:
                 print("friend")
                 print("unfriend")
                 print("createCollection")
-                print("seeCollection")
+                print("renameCollection")
+                print("deleteCollection")
+                print("viewCollection")
+                print("addGame")
+                print("removeGame")
                 print("quit")
                 continue
             elif command == '':
@@ -133,6 +137,22 @@ try:
                 createCollection(curs, user_name)
                 curs.close()
                 continue
+            elif command.startswith('renameCollection'):
+                if user_name == None:
+                    print("Please login first.")
+                    continue
+                curs = conn.cursor()
+                renameCollection(curs, user_name)
+                curs.close()
+                continue
+            elif command.startswith('deleteCollection'):
+                if user_name == None:
+                    print("Please login first.")
+                    continue
+                curs = conn.cursor()
+                deleteCollection(curs, user_name)
+                curs.close()
+                continue
             elif command.startswith('viewCollections'):
                 if user_name == None:
                     print("Please login first.")
@@ -141,7 +161,25 @@ try:
                 viewCollections(curs, user_name)
                 curs.close()
                 continue
+            if command.startswith('addGame'):
+                curs = conn.cursor()
+                if user_name == None:
+                    print("Please login first.")
+                    continue
+                addToCollection(curs, user_name)
+                curs.close()
+                continue
+            if command.startswith('removeGame'):
+                curs = conn.cursor()
+                if user_name == None:
+                    print("Please login first.")
+                    continue
+                removeFromCollection(curs, user_name)
+                curs.close()
+                continue
         conn.close()
         print("Database connection closed")
+        server.stop()
+        print("SSH tunnel closed")
 except Exception as e:
     print(e)
