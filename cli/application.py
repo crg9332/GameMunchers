@@ -9,7 +9,8 @@ from sshtunnel import SSHTunnelForwarder
 import os
 from dotenv import load_dotenv
 from auth import signup, login
-from friends import *
+# from playRate import rate, playRandom, playChosen
+from friends import friend, unfriend
 
 load_dotenv()
 
@@ -36,51 +37,92 @@ try:
         }
 
         conn = psycopg2.connect(**params)
-        # curs = conn.cursor()
         print("Database connection established")
         print("Input commands (quit to exit, help for help):")
         while True:
+            print()
             command = input("> ")
             if command == 'quit':
                 break
-            if command == '':
+            elif command == 'help':
+                print("Commands:")
+                print("signup")
+                print("login")
+                print("logout")
+                print("rate")
+                print("play random")
+                print("play")
+                print("friend")
+                print("unfriend")
+                print("quit")
                 continue
-            if command.startswith('signup'):
-                args = command.split(' ')[1:]
+            elif command == '':
+                continue
+            elif command.startswith('signup'):
+                if user_name != None:
+                    print("You are logged in, please log out first.")
+                    continue
                 curs = conn.cursor()
-                signup(curs, args)
+                signup(curs)
                 curs.close()
                 continue
-            if command.startswith('login'):
-                args = command.split(' ')[1:]
+            elif command.startswith('login'):
+                if user_name != None:
+                    print("You are already logged in.")
+                    continue
                 curs = conn.cursor()
-                output = login(curs, args)
+                output = login(curs)
                 if output is not None:
                     user_name = output
                 curs.close()
                 continue
-            if command.startswith('friend'):
-                args = command.split(' ')[1:]
-                curs = conn.cursor()
+            elif command.startswith('logout'):
                 if user_name == None:
-                    print("Please login first!")
+                    print("You are not logged in.")
                     continue
-                friend(curs, user_name, args)
+                user_name = None
+                print("Logged out successfully")
+                continue
+            elif command.startswith('rate'):
+                if user_name == None:
+                    print("Please login first.")
+                    continue
+                curs = conn.cursor()
+                rate(curs, user_name)
+                curs.close()
+                continue
+            elif command.startswith('play random'):
+                if user_name == None:
+                    print("Please login first.")
+                    continue
+                curs = conn.cursor()
+                playRandom(curs, user_name)
                 curs.close
                 continue
-            if command.startswith('unfriend'):
-                args = command.split(' ')[1:]
+            elif command.startswith('play'):
+                if user_name == None:
+                    print("Please login first.")
+                    continue
                 curs = conn.cursor()
+                playChosen(curs, user_name)
+                curs.close
+                continue
+            elif command.startswith('friend'):
                 if user_name == None:
                     print("Please login first!")
                     continue
-                unfriend(curs, user_name, args)
+                curs = conn.cursor()
+                friend(curs, user_name)
                 curs.close
-                continue           
-
-            # curs.execute(command)
-            # print(curs.fetchall())
-        # curs.close()
+                continue
+            elif command.startswith('unfriend'):
+                if user_name == None:
+                    print("Please login first!")
+                    continue
+                curs = conn.cursor()
+                unfriend(curs, user_name)
+                curs.close
+                continue
         conn.close()
         print("Database connection closed")
 except Exception as e:
