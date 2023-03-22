@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 from auth import signup, login
 from playRate import rate, playRandom, playChosen
 from friends import friend, unfriend
-from collection import *
+from collection import createCollection, seeCollections
 
 load_dotenv()
 
@@ -54,6 +54,8 @@ try:
                 print("play")
                 print("friend")
                 print("unfriend")
+                print("createCollection")
+                print("seeCollection")
                 print("quit")
                 continue
             elif command == '':
@@ -123,26 +125,22 @@ try:
                 unfriend(curs, user_name)
                 curs.close
                 continue
-            if command.startswith('createCollection'):
-                args = command.split(' ')[1:]
-                curs = conn.cursor()
+            elif command.startswith('createCollection'):
                 if user_name == None:
                     print("Please login first.")
                     continue
-                createCollection(curs, user_name, args)
+                curs = conn.cursor()
+                createCollection(curs, user_name)
                 curs.close()
                 continue
-            if command.startswith('seeCollection'):
-                curs = conn.cursor()
+            elif command.startswith('seeCollections'):
                 if user_name == None:
                     print("Please login first.")
                     continue
-                seeCollection(curs, user_name)
+                curs = conn.cursor()
+                seeCollections(curs, user_name)
                 curs.close()
                 continue
-            # curs.execute(command)
-            # print(curs.fetchall())
-        # curs.close()
         conn.close()
         print("Database connection closed")
 except Exception as e:
