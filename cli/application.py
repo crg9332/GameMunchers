@@ -10,6 +10,7 @@ import os
 from dotenv import load_dotenv
 from auth import signup, login
 from playRate import rate, playRandom, playChosen
+from friends import friend, unfriend
 
 load_dotenv()
 
@@ -50,6 +51,8 @@ try:
                 print("rate")
                 print("play random")
                 print("play")
+                print("friend")
+                print("unfriend")
                 print("quit")
                 continue
             elif command == '':
@@ -101,6 +104,22 @@ try:
                     continue
                 curs = conn.cursor()
                 playChosen(curs, user_name)
+                curs.close
+                continue
+            elif command.startswith('friend'):
+                if user_name == None:
+                    print("Please login first!")
+                    continue
+                curs = conn.cursor()
+                friend(curs, user_name)
+                curs.close
+                continue
+            elif command.startswith('unfriend'):
+                if user_name == None:
+                    print("Please login first!")
+                    continue
+                curs = conn.cursor()
+                unfriend(curs, user_name)
                 curs.close
                 continue
         conn.close()
