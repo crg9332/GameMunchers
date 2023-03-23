@@ -111,7 +111,9 @@ def viewCollections(curs, username):
             print(f"Collection Name: {title}")
             print(f"Total Number of Games: {gameCount[0]}")
             if totalPlayedSession[0] != None:
-                print(f"Total Time Played: {totalPlayedSession[0].seconds//3600} hours {(totalPlayedSession[0].seconds//60)%60} minutes")
+                # print(f"Total Time Played: {totalPlayedSession[0].seconds//3600} hours {(totalPlayedSession[0].seconds//60)%60} minutes")
+                # Use total_seconds instead of seconds to get the total time in seconds
+                print(f"Total Time Played: {int(totalPlayedSession[0].total_seconds()//3600)} hours {int((totalPlayedSession[0].total_seconds()//60)%60)} minutes")
             else:
                 print(f"Total Time Played: 0 hours 0 minutes")
         print("-"*50)
