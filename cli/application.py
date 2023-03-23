@@ -81,6 +81,11 @@ try:
             if command.startswith('search'):
                 curs = conn.cursor()
                 search(curs, args)
+                continue
+            if command.startswith('sort'):
+                curs = conn.cursor()
+                sort(curs)
+                continue
             # curs.execute(command)
             # print(curs.fetchall())
         curs.close()

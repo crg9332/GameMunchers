@@ -1,4 +1,3 @@
-import numpy as np
 from datetime import datetime, timedelta, time
 
 def search(curs, args):
@@ -198,37 +197,46 @@ def search(curs, args):
             print(e)
             curs.execute("ROLLBACK")
                
-               
-# def findstuff(curs, gameid):
-#     #if game exist
-#     if len(gameid) == 0:
-#         print("Game does not exist")
-#         return
-    
-#     # game name
-#     curs.execute("SELECT gametitle FROM games WHERE gameid = %s", (gameid))
-#     gameTitle = curs.fetchone()
-    
-#     # platform
-#     curs.execute("SELECT platformtype FROM platforms as p, releasegame as r WHERE r.gameid = %s AND r.platformid = p.platformid", (gameid))
-#     platform = curs.fetchone()
-    
-#     # developer
-#     curs.execute("SELECT creatorname FROM development as d, creator as c WHERE d.gameid = %s AND c.creatorid = d.creatorid", (gameid))
-#     developer = curs.fetchall()
-    
-#     # publisher
-#     curs.execute("SELECT creatorname FROM publishment as p, creator as c WHERE d.gameid = %s AND c.creatorid = p.creatorid", (gameid))
-#     publisher = curs.fetchone()
-    
-#     # playtime
-#     curs.execute("SELECT SUM(timeplayed) FROM gamesession WHERE gameid = %s", (gameid))
-#     playtime = curs.fetchone()
-    
-#     # age and username
-#     curs.execute("SELECT ratingdate FROM starrating WHERE gameid = %s", (gameid))
-#     ratingDate = curs.fetchall()
-#     nowTime = datetime.now()
-#     age = nowTime - ratingDate
-#     curs.execute("SELECT username FROM starrating WHERE gameid = %s", (gameid))
-#     username = curs.fetchall()
+def sort(curs):
+    userInput = input("Sort by (video game name, price, genre, and released year) : ")
+    try:
+        if userInput.startswith('video'):
+            curs.execute("SELECT g.gameTitle, rg.price, gn.genrename, DATE_PART('YEAR', rg.releasedate)\
+                    FROM Games g JOIN ReleaseGame rg ON\
+                    JOIN gamesgenre gg ON g.gameID = gg.gameID\
+                    JOIN Genre gn ON gg.genreID = gn.genreID\
+                    ORDER BY g.gameTitle\
+                    LIMIT 100")
+        if userInput.startswith('price'):
+            curs.execute("SELECT g.gameTitle, rg.price, gn.genrename, DATE_PART('YEAR', rg.releasedate)\
+                    FROM Games g JOIN ReleaseGame rg ON\
+                    JOIN gamesgenre gg ON g.gameID = gg.gameID\
+                    JOIN Genre gn ON gg.genreID = gn.genreID\
+                    ORDER BY rg.price\
+                    LIMIT 100")
+        if userInput.startswith('genre'):
+            curs.execute("SELECT g.gameTitle, rg.price, gn.genrename, DATE_PART('YEAR', rg.releasedate)\
+                    FROM Games g JOIN ReleaseGame rg ON\
+                    JOIN gamesgenre gg ON g.gameID = gg.gameID\
+                    JOIN Genre gn ON gg.genreID = gn.genreID\
+                    ORDER BY gn.genrename\
+                    LIMIT 100")
+        if userInput.startswith('released'):
+            curs.execute("SELECT g.gameTitle, rg.price, gn.genrename, DATE_PART('YEAR', rg.releasedate)\
+                    FROM Games g JOIN ReleaseGame rg ON\
+                    JOIN gamesgenre gg ON g.gameID = gg.gameID\
+                    JOIN Genre gn ON gg.genreID = gn.genreID\
+                    ORDER BY rg.releasedate\
+                    LIMIT 100")
+        else:
+            print("%s is an invalid input. Please type video game name, price, genre, or released year.", (input))
+            return
+        results = curs.fetchall()
+            
+        for result in results:
+            print("Video Game Name: %s, Price: %s, Genre: %s, Release Date: %s", \
+                (result[0], result[1], result[2], result[3]))
+        
+    except Exception as e:
+        print(e)
+        curs.execute("ROLLBACK")
