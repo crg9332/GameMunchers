@@ -9,7 +9,6 @@ from sshtunnel import SSHTunnelForwarder
 import os
 from dotenv import load_dotenv
 from auth import signup, login
-from playRate import *
 from random import *
 from search import *
 
@@ -80,7 +79,7 @@ try:
                 continue
             if command.startswith('search'):
                 curs = conn.cursor()
-                search(curs, args)
+                search(curs)
                 continue
             if command.startswith('sort'):
                 curs = conn.cursor()
