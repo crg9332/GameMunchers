@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 from auth import signup, login
 from playRate import *
 from random import *
+from search import *
 
 load_dotenv()
 
@@ -77,6 +78,9 @@ try:
                 play(curs, user_name, args)
                 curs.close
                 continue
+            if command.startswith('search'):
+                curs = conn.cursor()
+                search(curs, args)
             # curs.execute(command)
             # print(curs.fetchall())
         curs.close()
