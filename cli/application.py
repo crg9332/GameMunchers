@@ -12,8 +12,7 @@ from auth import signup, login
 from games import rate, playRandom, playChosen
 from friends import friend, unfriend
 from collection import createCollection, viewCollections, renameCollection, deleteCollection, addToCollection, removeFromCollection
-from random import *
-from search import *
+from search import search, sort
 
 load_dotenv()
 
