@@ -1,7 +1,6 @@
 from prettytable import PrettyTable
 from prettytable import ALL as ALL
 
-# Create a function to add line breaks to columns that are too long
 def addLineBreaks(text, maxLen):
     # if the text is too long, add a line break
     if len(text) > maxLen:
@@ -25,7 +24,7 @@ def search(curs):
     userInput = input("Search by (title, platform, release, developers, price, genre): ")
     searchValue = ""
     
-    #search by gameTitle
+    # search by gameTitle
     if userInput == "title":
         try:
             gameTitle = input("Enter Game Title: ")
@@ -53,7 +52,7 @@ def search(curs):
             curs.execute("ROLLBACK")
             return
             
-    #search by platform
+    # search by platform
     elif userInput == "platform":
         try:
             # get platform options and display them to user
@@ -62,7 +61,6 @@ def search(curs):
             print("Platform options (case sensitive): ", end = "")
             start = True
             for platform in platforms:
-                # print(platform[0])
                 if start:
                     print(platform[0], end = "")
                     start = False
@@ -98,7 +96,7 @@ def search(curs):
             curs.execute("ROLLBACK")
             return
             
-    #search by release date
+    # search by release date
     elif userInput == "release":
         try:
             releaseDate = input("Enter release date in the format of year-month-day (xxxx-xx-xx): ")
@@ -125,7 +123,7 @@ def search(curs):
             curs.execute("ROLLBACK")
             return
     
-    #search by developers
+    # search by developers
     elif userInput == "developers":
         try:
             developers = input("Enter developer: ")
@@ -152,7 +150,7 @@ def search(curs):
             curs.execute("ROLLBACK")
             return
             
-    #search by price
+    # search by price
     elif userInput == "price":
         try:
             print("Prices are in the format of x9.99")
@@ -180,7 +178,7 @@ def search(curs):
             curs.execute("ROLLBACK")
             return
     
-    #search by genre
+    # search by genre
     elif userInput == "genre":
         try:
             # get the domain of genres for the user to choose from
@@ -340,7 +338,17 @@ def search(curs):
     print(table)
 
 def sort(curs):
+    sortDomain = set(["title", "price", "genre", "year"])
     userInput = input("Sort by (title, price, genre, year): ")
+    while userInput not in sortDomain:
+        userInput = input("Invalid input, please try again: ")
+    order = input("Ascending or descending (a/d): ")
+    while order != "a" and order != "d":
+        order = input("Invalid input, please try again: ")
+    if order == "a":
+        order = "ASC"
+    else:
+        order = "DESC"
     try:
         if userInput == "title":
             curs.execute("SELECT g.gameTitle, rg.price, ge.genreName, rg.releaseDate\
@@ -349,8 +357,9 @@ def sort(curs):
                     JOIN gamesgenre gg ON g.gameID = gg.gameID\
                     JOIN Genre ge ON gg.genreID = ge.genreID\
                     GROUP BY g.gameTitle, rg.price, ge.genreName, rg.releaseDate\
-                    ORDER BY g.gameTitle\
-                    LIMIT 100")
+                    ORDER BY g.gameTitle %s\
+                    LIMIT 100;" % order)
+
         elif userInput == "price":
             curs.execute("SELECT g.gameTitle, rg.price, ge.genreName, rg.releaseDate\
                     FROM Games g\
@@ -358,8 +367,8 @@ def sort(curs):
                     JOIN gamesgenre gg ON g.gameID = gg.gameID\
                     JOIN Genre ge ON gg.genreID = ge.genreID\
                     GROUP BY g.gameTitle, rg.price, ge.genreName, rg.releaseDate\
-                    ORDER BY rg.price\
-                    LIMIT 100")
+                    ORDER BY rg.price %s\
+                    LIMIT 100;" % order)
         elif userInput == "genre":
             curs.execute("SELECT g.gameTitle, rg.price, ge.genreName, rg.releaseDate\
                     FROM Games g\
@@ -367,8 +376,8 @@ def sort(curs):
                     JOIN gamesgenre gg ON g.gameID = gg.gameID\
                     JOIN Genre ge ON gg.genreID = ge.genreID\
                     GROUP BY g.gameTitle, rg.price, ge.genreName, rg.releaseDate\
-                    ORDER BY ge.genreName\
-                    LIMIT 100")
+                    ORDER BY ge.genreName %s\
+                    LIMIT 100;" % order)
         elif userInput == "year":
             curs.execute("SELECT g.gameTitle, rg.price, ge.genreName, rg.releaseDate\
                     FROM Games g\
@@ -376,8 +385,8 @@ def sort(curs):
                     JOIN gamesgenre gg ON g.gameID = gg.gameID\
                     JOIN Genre ge ON gg.genreID = ge.genreID\
                     GROUP BY g.gameTitle, rg.price, ge.genreName, rg.releaseDate\
-                    ORDER BY rg.releaseDate\
-                    LIMIT 100")
+                    ORDER BY rg.releaseDate %s\
+                    LIMIT 100" % order)
         else:
             print("Invalid input")
             return
@@ -387,6 +396,8 @@ def sort(curs):
         if len(results) == 0:
             print(f"No results found for {userInput}")
             return
+        else:
+            print(f"Showing top 100 results sorted by {userInput}")
         
         # old display results
         # print("|{0: <100}| {1: <10}| {2: <20}| {3: <15}|".format("Video Game", "Price", "Genre", "Release Date"))
