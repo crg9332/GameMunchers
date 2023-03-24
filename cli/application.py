@@ -61,6 +61,8 @@ try:
                 print("viewCollection")
                 print("addGame")
                 print("removeGame")
+                print("search")
+                print("sort")
                 print("quit")
                 continue
             elif command == '':
@@ -187,6 +189,9 @@ try:
                 curs = conn.cursor()
                 sort(curs)
                 curs.close()
+                continue
+            else:
+                print("Invalid command, type help for a list of commands or quit to quit")
                 continue
         conn.close()
         print("Database connection closed")

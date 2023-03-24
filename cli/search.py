@@ -1,4 +1,25 @@
-# TODO: Test and Fix sort()
+from prettytable import PrettyTable
+from prettytable import ALL as ALL
+
+# Create a function to add line breaks to columns that are too long
+def addLineBreaks(text, maxLen):
+    # if the text is too long, add a line break
+    if len(text) > maxLen:
+        # find the last space before the max length
+        lastSpace = text.rfind(" ", 0, maxLen)
+        # if there is no space before the max length, just break at the max length
+        if lastSpace == -1:
+            lastSpace = maxLen
+        # add a line break at the last space
+        text = text[:lastSpace] + "\n" + text[lastSpace:]
+    return text
+
+def addCommaLineBreaks(text, maxLen):
+    # if the text is too long, add a line break
+    if len(text) > maxLen:
+        # replace all commas with line breaks
+        text = text.replace(", ", "\n")
+    return text
 
 def search(curs):
     userInput = input("Search by (title, platform, release, developers, price, genre): ")
@@ -12,19 +33,19 @@ def search(curs):
                 print("No results")
                 return
             searchValue = gameTitle
-            curs.execute("SELECT g.gameTitle, p.platformType, cd.creatorName, \
-                cp.creatorName, SUM(gs.timePlayed) AS playtime, ROUND(AVG(sr.starRating), \
-                1) AS avgRating, rg.releasedate FROM Games g JOIN ReleaseGame rg ON \
-                g.gameID = rg.gameID JOIN Platforms p ON rg.platformID = p.platformID \
+            curs.execute("SELECT g.gameTitle, p.platformType, cd.creatorName as developer, cp.creatorName as publisher, \
+                (SELECT SUM(gs.timePlayed) FROM GameSession gs WHERE gs.gameID = g.gameID) AS playtime, \
+                ROUND(AVG(sr.starRating), 1) AS avgRating, rg.releasedate \
+                FROM Games g \
+                JOIN ReleaseGame rg ON g.gameID = rg.gameID \
+                JOIN Platforms p ON rg.platformID = p.platformID \
                 LEFT JOIN Development d ON g.gameID = d.gameID \
                 LEFT JOIN Creator cd ON d.creatorID = cd.creatorID \
                 LEFT JOIN Publishment pb ON g.gameID = pb.gameID \
                 LEFT JOIN Creator cp ON pb.creatorID = cp.creatorID \
-                LEFT JOIN GameSession gs ON g.gameID = gs.gameID \
                 LEFT JOIN StarRating sr ON g.gameID = sr.gameID \
                 WHERE g.gameTitle ILIKE %s \
-                GROUP BY g.gameTitle, p.platformType, cd.creatorName, \
-                cp.creatorName, rg.releaseDate \
+                GROUP BY g.gameTitle, p.platformType, cd.creatorName, cp.creatorName, rg.releaseDate, g.gameID \
                 ORDER BY g.gameTitle, rg.releaseDate;", ("%" + gameTitle + "%",))
             
         except Exception as e:
@@ -58,19 +79,19 @@ def search(curs):
                 print(f"Invalid platform \"{platform}\"")
                 return
             searchValue = platform
-            curs.execute("SELECT g.gameTitle, p.platformType, cd.creatorName, \
-                cp.creatorName, SUM(gs.timePlayed) AS playtime, ROUND(AVG(sr.starRating), \
-                1) AS avgRating, rg.releasedate FROM Games g JOIN ReleaseGame rg ON \
-                g.gameID = rg.gameID JOIN Platforms p ON rg.platformID = p.platformID \
+            curs.execute("SELECT g.gameTitle, p.platformType, cd.creatorName as developer, cp.creatorName as publisher, \
+                (SELECT SUM(gs.timePlayed) FROM GameSession gs WHERE gs.gameID = g.gameID) AS playtime, \
+                ROUND(AVG(sr.starRating), 1) AS avgRating, rg.releasedate \
+                FROM Games g \
+                JOIN ReleaseGame rg ON g.gameID = rg.gameID \
+                JOIN Platforms p ON rg.platformID = p.platformID \
                 LEFT JOIN Development d ON g.gameID = d.gameID \
                 LEFT JOIN Creator cd ON d.creatorID = cd.creatorID \
                 LEFT JOIN Publishment pb ON g.gameID = pb.gameID \
                 LEFT JOIN Creator cp ON pb.creatorID = cp.creatorID \
-                LEFT JOIN GameSession gs ON g.gameID = gs.gameID \
                 LEFT JOIN StarRating sr ON g.gameID = sr.gameID \
                 WHERE p.platformtype = %s \
-                GROUP BY g.gameTitle, p.platformType, cd.creatorName, \
-                cp.creatorName, rg.releaseDate \
+                GROUP BY g.gameTitle, p.platformType, cd.creatorName, cp.creatorName, rg.releaseDate, g.gameID \
                 ORDER BY g.gameTitle, rg.releaseDate;", (platform,))
         except Exception as e:
             print(e)
@@ -85,20 +106,20 @@ def search(curs):
                 print("No results")
                 return
             searchValue = releaseDate
-            curs.execute("SELECT g.gameTitle, p.platformType, cd.creatorName, \
-                cp.creatorName, SUM(gs.timePlayed) AS playtime, ROUND(AVG(sr.starRating), \
-                1) AS avgRating, rg.releasedate FROM Games g JOIN ReleaseGame rg ON \
-                g.gameID = rg.gameID JOIN Platforms p ON rg.platformID = p.platformID \
+            curs.execute("SELECT g.gameTitle, p.platformType, cd.creatorName as developer, cp.creatorName as publisher, \
+                (SELECT SUM(gs.timePlayed) FROM GameSession gs WHERE gs.gameID = g.gameID) AS playtime, \
+                ROUND(AVG(sr.starRating), 1) AS avgRating, rg.releasedate \
+                FROM Games g \
+                JOIN ReleaseGame rg ON g.gameID = rg.gameID \
+                JOIN Platforms p ON rg.platformID = p.platformID \
                 LEFT JOIN Development d ON g.gameID = d.gameID \
                 LEFT JOIN Creator cd ON d.creatorID = cd.creatorID \
                 LEFT JOIN Publishment pb ON g.gameID = pb.gameID \
                 LEFT JOIN Creator cp ON pb.creatorID = cp.creatorID \
-                LEFT JOIN GameSession gs ON g.gameID = gs.gameID \
                 LEFT JOIN StarRating sr ON g.gameID = sr.gameID \
                 WHERE rg.releaseDate = %s \
-                GROUP BY g.gameTitle, p.platformType, cd.creatorName, \
-                cp.creatorName, rg.releaseDate \
-                ORDER BY g.gameTitle, rg.releaseDate;", (releaseDate,))                
+                GROUP BY g.gameTitle, p.platformType, cd.creatorName, cp.creatorName, rg.releaseDate, g.gameID \
+                ORDER BY g.gameTitle, rg.releaseDate;", (releaseDate,))
         except Exception as e:
             print(e)
             curs.execute("ROLLBACK")
@@ -112,20 +133,20 @@ def search(curs):
                 print("No results")
                 return
             searchValue = developers
-            curs.execute("SELECT g.gameTitle, p.platformType, cd.creatorName, \
-                cp.creatorName, SUM(gs.timePlayed) AS playtime, ROUND(AVG(sr.starRating), \
-                1) AS avgRating, rg.releasedate FROM Games g JOIN ReleaseGame rg ON \
-                g.gameID = rg.gameID JOIN Platforms p ON rg.platformID = p.platformID \
+            curs.execute("SELECT g.gameTitle, p.platformType, cd.creatorName as developer, cp.creatorName as publisher, \
+                (SELECT SUM(gs.timePlayed) FROM GameSession gs WHERE gs.gameID = g.gameID) AS playtime, \
+                ROUND(AVG(sr.starRating), 1) AS avgRating, rg.releasedate \
+                FROM Games g \
+                JOIN ReleaseGame rg ON g.gameID = rg.gameID \
+                JOIN Platforms p ON rg.platformID = p.platformID \
                 LEFT JOIN Development d ON g.gameID = d.gameID \
                 LEFT JOIN Creator cd ON d.creatorID = cd.creatorID \
                 LEFT JOIN Publishment pb ON g.gameID = pb.gameID \
                 LEFT JOIN Creator cp ON pb.creatorID = cp.creatorID \
-                LEFT JOIN GameSession gs ON g.gameID = gs.gameID \
                 LEFT JOIN StarRating sr ON g.gameID = sr.gameID \
                 WHERE cd.creatorName ILIKE %s \
-                GROUP BY g.gameTitle, p.platformType, cd.creatorName, \
-                cp.creatorName, rg.releaseDate \
-                ORDER BY g.gameTitle, rg.releaseDate;", ("%" + developers + "%",))                
+                GROUP BY g.gameTitle, p.platformType, cd.creatorName, cp.creatorName, rg.releaseDate, g.gameID \
+                ORDER BY g.gameTitle, rg.releaseDate;", ("%" + developers + "%",))
         except Exception as e:
             print(e)
             curs.execute("ROLLBACK")
@@ -140,19 +161,19 @@ def search(curs):
                 print("No results")
                 return
             searchValue = price
-            curs.execute("SELECT g.gameTitle, p.platformType, cd.creatorName, \
-                cp.creatorName, SUM(gs.timePlayed) AS playtime, ROUND(AVG(sr.starRating), \
-                1) AS avgRating, rg.releasedate FROM Games g JOIN ReleaseGame rg ON \
-                g.gameID = rg.gameID JOIN Platforms p ON rg.platformID = p.platformID \
+            curs.execute("SELECT g.gameTitle, p.platformType, cd.creatorName as developer, cp.creatorName as publisher, \
+                (SELECT SUM(gs.timePlayed) FROM GameSession gs WHERE gs.gameID = g.gameID) AS playtime, \
+                ROUND(AVG(sr.starRating), 1) AS avgRating, rg.releasedate \
+                FROM Games g \
+                JOIN ReleaseGame rg ON g.gameID = rg.gameID \
+                JOIN Platforms p ON rg.platformID = p.platformID \
                 LEFT JOIN Development d ON g.gameID = d.gameID \
                 LEFT JOIN Creator cd ON d.creatorID = cd.creatorID \
                 LEFT JOIN Publishment pb ON g.gameID = pb.gameID \
                 LEFT JOIN Creator cp ON pb.creatorID = cp.creatorID \
-                LEFT JOIN GameSession gs ON g.gameID = gs.gameID \
                 LEFT JOIN StarRating sr ON g.gameID = sr.gameID \
                 WHERE rg.price = %s \
-                GROUP BY g.gameTitle, p.platformType, cd.creatorName, \
-                cp.creatorName, rg.releaseDate \
+                GROUP BY g.gameTitle, p.platformType, cd.creatorName, cp.creatorName, rg.releaseDate, g.gameID \
                 ORDER BY g.gameTitle, rg.releaseDate;", (price,))
         except Exception as e:
             print(e)
@@ -184,21 +205,21 @@ def search(curs):
                 print(f"Invalid genre \"{genre}\"")
                 return
             searchValue = genre
-            curs.execute("SELECT g.gameTitle, p.platformType, cd.creatorName,\
-                cp.creatorName, SUM(gs.timePlayed) AS playtime, ROUND(AVG(sr.starRating),\
-                1) AS avgRating, rg.releasedate FROM Games g JOIN ReleaseGame rg ON\
-                g.gameID = rg.gameID JOIN Platforms p ON rg.platformID = p.platformID\
-                LEFT JOIN Development d ON g.gameID = d.gameID\
-                LEFT JOIN Creator cd ON d.creatorID = cd.creatorID\
-                LEFT JOIN Publishment pb ON g.gameID = pb.gameID\
-                LEFT JOIN Creator cp ON pb.creatorID = cp.creatorID\
-                LEFT JOIN GameSession gs ON g.gameID = gs.gameID\
-                LEFT JOIN StarRating sr ON g.gameID = sr.gameID\
-                JOIN gamesgenre gg ON g.gameID = gg.gameID\
-                JOIN Genre gn ON gg.genreID = gn.genreID\
-                WHERE gn.genrename = %s\
-                GROUP BY g.gameTitle, p.platformType, cd.creatorName,\
-                cp.creatorName, rg.releaseDate\
+            curs.execute("SELECT g.gameTitle, p.platformType, cd.creatorName as developer, cp.creatorName as publisher, \
+                (SELECT SUM(gs.timePlayed) FROM GameSession gs WHERE gs.gameID = g.gameID) AS playtime, \
+                ROUND(AVG(sr.starRating), 1) AS avgRating, rg.releasedate \
+                FROM Games g \
+                JOIN ReleaseGame rg ON g.gameID = rg.gameID \
+                JOIN Platforms p ON rg.platformID = p.platformID \
+                LEFT JOIN Development d ON g.gameID = d.gameID \
+                LEFT JOIN Creator cd ON d.creatorID = cd.creatorID \
+                LEFT JOIN Publishment pb ON g.gameID = pb.gameID \
+                LEFT JOIN Creator cp ON pb.creatorID = cp.creatorID \
+                LEFT JOIN StarRating sr ON g.gameID = sr.gameID \
+                JOIN gamesgenre gg ON g.gameID = gg.gameID \
+                JOIN Genre gn ON gg.genreID = gn.genreID \
+                WHERE gn.genrename = %s \
+                GROUP BY g.gameTitle, p.platformType, cd.creatorName, cp.creatorName, rg.releaseDate, g.gameID \
                 ORDER BY g.gameTitle, rg.releaseDate", (genre,))
         except Exception as e:
             print(e)
@@ -217,6 +238,7 @@ def search(curs):
     # Bundle duplicate game titles into a single entry with a list of platforms, developers, and publishers
     compiledResults = []
     compiledResultsSet = []
+    compiledResultsCount = 0
     for result in results:
         result = list(result)
         if len(compiledResults) == 0:
@@ -226,6 +248,7 @@ def search(curs):
             result[2] = set([result[2]])
             result[3] = set([result[3]])
             compiledResultsSet.append(result)
+            compiledResultsCount += 1
         else:
             if result[0] == compiledResults[-1][0]:
                 if result[1] not in compiledResultsSet[-1][1]:
@@ -238,6 +261,8 @@ def search(curs):
                     compiledResultsSet[-1][3].add(result[3])
                     compiledResults[-1][3] = compiledResults[-1][3] + ", " + result[3]
             else:
+                if compiledResultsCount >= 100:
+                    break
                 compiledResults.append(result[:])
                 # format the results to use sets instead of strings
                 result[1] = set([result[1]])
@@ -246,88 +271,144 @@ def search(curs):
                 # clear out the old compiledResultsSet to save memory
                 compiledResultsSet.clear()
                 compiledResultsSet.append(result)
+                compiledResultsCount += 1
     
     # cut off the results if there are too many, stop them at 100
-    if len(compiledResults) > 100:
+    if compiledResultsCount >= 100:
         compiledResults = compiledResults[:100]
         print("Showing top 100 results")
     else:
-        print(f"Showing {len(compiledResults)} results")
+        print(f"Showing {compiledResultsCount} results")
 
+    # COMMENTED OUT CODE IS FOR PRINTING TABLE WITHOUT prettytable
     # find the length of the longest game title in results
-    maxTitleLength = 5
-    maxPlatformLength = 8
-    maxDeveloperLength = 9
-    maxPublisherLength = 9
+    # maxTitleLength = 5
+    # maxPlatformLength = 8
+    # maxDeveloperLength = 9
+    # maxPublisherLength = 9
+    # for result in compiledResults:
+    #     if len(result[0]) > maxTitleLength:
+    #         maxTitleLength = len(result[0])
+    #     if len(result[1]) > maxPlatformLength:
+    #         maxPlatformLength = len(result[1])
+    #     if result[2] != None and len(result[2]) > maxDeveloperLength:
+    #         maxDeveloperLength = len(result[2])
+    #     if result[3] != None and len(result[3]) > maxPublisherLength:
+    #         maxPublisherLength = len(result[3])
+    # maxTitleLength += 2
+    # maxPlatformLength += 2
+    # maxDeveloperLength += 2
+    # maxPublisherLength += 2
+    # print("-" * (maxTitleLength + maxPlatformLength + maxDeveloperLength + maxPublisherLength + 20 + 16 + 7))
+    # print("|{0:^{1}}|{2:^{3}}|{4:^{5}}|{6:^{7}}|{8:^20}|{9:^16}|".format("Title", maxTitleLength, "Platform", maxPlatformLength, "Developer", maxDeveloperLength, "Publisher", maxPublisherLength, "Playtime", "Average Rating"))
+    # for result in compiledResults:
+    #     # display playtime as hours to the nearest tenth
+    #     if result[4] != None:
+    #         playtime = str(round(result[4].total_seconds() / 60 / 60, 1)) + " hours"
+    #     else:
+    #         playtime = "N/A"
+    #     # display results
+    #     print("|{0:<{1}}|{2:^{3}}|{4:<{5}}|{6:<{7}}|{8:^20}|{9:^16}|".format(result[0], maxTitleLength, str(result[1]), maxPlatformLength, str(result[2]), maxDeveloperLength, str(result[3]), maxPublisherLength, playtime, str(result[5])))
+    # print("-" * (maxTitleLength + maxPlatformLength + maxDeveloperLength + maxPublisherLength + 20 + 16 + 7))
+    
+    # Print the results in a table using prettytable
+    table = PrettyTable(hrules=ALL)
+    table.field_names = ["Title", "Platform", "Developer", "Publisher", "Playtime", "Average Rating"]
+    table.align["Title"] = "l"
+    table.align["Platform"] = "l"
+    table.align["Developer"] = "l"
+    table.align["Publisher"] = "l"
+    table.align["Playtime"] = "r"
+    table.align["Average Rating"] = "r"
     for result in compiledResults:
-        if len(result[0]) > maxTitleLength:
-            maxTitleLength = len(result[0])
-        if len(result[1]) > maxPlatformLength:
-            maxPlatformLength = len(result[1])
-        if result[2] != None and len(result[2]) > maxDeveloperLength:
-            maxDeveloperLength = len(result[2])
-        if result[3] != None and len(result[3]) > maxPublisherLength:
-            maxPublisherLength = len(result[3])
-    maxTitleLength += 2
-    maxPlatformLength += 2
-    maxDeveloperLength += 2
-    maxPublisherLength += 2
-    print("-" * (maxTitleLength + maxPlatformLength + maxDeveloperLength + maxPublisherLength + 20 + 16 + 7))
-    print("|{0:^{1}}|{2:^{3}}|{4:^{5}}|{6:^{7}}|{8:^20}|{9:^16}|".format("Title", maxTitleLength, "Platform", maxPlatformLength, "Developer", maxDeveloperLength, "Publisher", maxPublisherLength, "Playtime", "Average Rating"))
-    for result in compiledResults:
-        # print("|{0:<{1}}|{2:^{3}}|{4:<{5}}|{6:<{7}}|{8:^20}|{9:^16}|".format(result[0], maxTitleLength, str(result[1]), maxPlatformLength, str(result[2]), maxDeveloperLength, str(result[3]), maxPublisherLength, str(result[4]), str(result[5])))
         # display playtime as hours to the nearest tenth
         if result[4] != None:
-            playtime = str(round(result[4].total_seconds() / 60 / 60, 1)) + " hours"
+            # if total playtime is less than 1 hour, display in minutes
+            if result[4].total_seconds() / 60 < 60:
+                playtime = str(round(result[4].total_seconds() / 60)) + " minutes"
+            else:
+                playtime = str(round(result[4].total_seconds() / 60 / 60, 1)) + " hours"
         else:
             playtime = "N/A"
+        # call functions to perform line breaks
+        result[0] = addLineBreaks(result[0], 50)
+        result[2] = addCommaLineBreaks(str(result[2]), 30)
+        result[3] = addCommaLineBreaks(str(result[3]), 30)
+
         # display results
-        print("|{0:<{1}}|{2:^{3}}|{4:<{5}}|{6:<{7}}|{8:^20}|{9:^16}|".format(result[0], maxTitleLength, str(result[1]), maxPlatformLength, str(result[2]), maxDeveloperLength, str(result[3]), maxPublisherLength, playtime, str(result[5])))
-    print("-" * (maxTitleLength + maxPlatformLength + maxDeveloperLength + maxPublisherLength + 20 + 16 + 7))
+        table.add_row([result[0], result[1], result[2], result[3], playtime, result[5]])
+    print(table)
 
 def sort(curs):
-    userInput = input("Sort by (video game name, price, genre, and released year): ")
+    userInput = input("Sort by (title, price, genre, year): ")
     try:
-        if userInput == "video game name":
-            curs.execute("SELECT g.gameTitle, rg.price, gn.genrename, DATE_PART('YEAR', rg.releasedate)\
-                    FROM Games g JOIN ReleaseGame rg ON rg.gameID = g.gameID\
+        if userInput == "title":
+            curs.execute("SELECT g.gameTitle, rg.price, ge.genreName, rg.releaseDate\
+                    FROM Games g\
+                    JOIN ReleaseGame rg ON g.gameID = rg.gameID\
                     JOIN gamesgenre gg ON g.gameID = gg.gameID\
-                    JOIN Genre gn ON gg.genreID = gn.genreID\
+                    JOIN Genre ge ON gg.genreID = ge.genreID\
+                    GROUP BY g.gameTitle, rg.price, ge.genreName, rg.releaseDate\
                     ORDER BY g.gameTitle\
                     LIMIT 100")
-        if userInput == "price":
-            curs.execute("SELECT g.gameTitle, rg.price, gn.genrename, DATE_PART('YEAR', rg.releasedate)\
-                    FROM Games g JOIN ReleaseGame rg ON rg.gameID = g.gameID\
+        elif userInput == "price":
+            curs.execute("SELECT g.gameTitle, rg.price, ge.genreName, rg.releaseDate\
+                    FROM Games g\
+                    JOIN ReleaseGame rg ON g.gameID = rg.gameID\
                     JOIN gamesgenre gg ON g.gameID = gg.gameID\
-                    JOIN Genre gn ON gg.genreID = gn.genreID\
+                    JOIN Genre ge ON gg.genreID = ge.genreID\
+                    GROUP BY g.gameTitle, rg.price, ge.genreName, rg.releaseDate\
                     ORDER BY rg.price\
                     LIMIT 100")
-        if userInput == "genre":
-            curs.execute("SELECT g.gameTitle, rg.price, gn.genrename, DATE_PART('YEAR', rg.releasedate)\
-                    FROM Games g JOIN ReleaseGame rg ON rg.gameID = g.gameID\
+        elif userInput == "genre":
+            curs.execute("SELECT g.gameTitle, rg.price, ge.genreName, rg.releaseDate\
+                    FROM Games g\
+                    JOIN ReleaseGame rg ON g.gameID = rg.gameID\
                     JOIN gamesgenre gg ON g.gameID = gg.gameID\
-                    JOIN Genre gn ON gg.genreID = gn.genreID\
-                    ORDER BY gn.genrename\
+                    JOIN Genre ge ON gg.genreID = ge.genreID\
+                    GROUP BY g.gameTitle, rg.price, ge.genreName, rg.releaseDate\
+                    ORDER BY ge.genreName\
                     LIMIT 100")
-        if userInput == "released year":
-            curs.execute("SELECT g.gameTitle, rg.price, gn.genrename, DATE_PART('YEAR', rg.releasedate)\
-                    FROM Games g JOIN ReleaseGame rg ON rg.gameID = g.gameID\
+        elif userInput == "year":
+            curs.execute("SELECT g.gameTitle, rg.price, ge.genreName, rg.releaseDate\
+                    FROM Games g\
+                    JOIN ReleaseGame rg ON g.gameID = rg.gameID\
                     JOIN gamesgenre gg ON g.gameID = gg.gameID\
-                    JOIN Genre gn ON gg.genreID = gn.genreID\
-                    ORDER BY rg.releasedate\
+                    JOIN Genre ge ON gg.genreID = ge.genreID\
+                    GROUP BY g.gameTitle, rg.price, ge.genreName, rg.releaseDate\
+                    ORDER BY rg.releaseDate\
                     LIMIT 100")
-        results = curs.fetchall()
-        if len(results) == 0:
-            print("Cannot sort by", userInput)
+        else:
+            print("Invalid input")
             return
-        print("|{0: <100}| {1: <10}| {2: <20}| {3: <15}|".format("Video Game", "Price", "Genre", "Release Date"))
+        
+        results = curs.fetchall()
+
+        if len(results) == 0:
+            print(f"No results found for {userInput}")
+            return
+        
+        # old display results
+        # print("|{0: <100}| {1: <10}| {2: <20}| {3: <15}|".format("Video Game", "Price", "Genre", "Release Date"))
+        # for result in results:
+        #     result = list(result)
+        #     if result[2] == None:
+        #         result[2] = "None"
+        #     if result[3] == None:
+        #         result[3] = "None"
+        #     print("|{0: <100}| {1: >10}| {2: >20}| {3: >15}|".format(result[0], result[1], result[2], str(result[3])))
+        
+        # Display results with prettytable
+        table = PrettyTable(hrules=ALL)
+        table.field_names = ["Video Game", "Price", "Genre", "Release Year"]
+        table.align["Video Game"] = "l"
+        table.align["Price"] = "r"
+        table.align["Genre"] = "l"
+        table.align["Release Year"] = "r"
         for result in results:
             result = list(result)
-            if result[2] == None:
-                result[2] = "None"
-            if result[3] == None:
-                result[3] = "None"
-            print("|{0: <100}| {1: >10}| {2: >20}| {3: >15}|".format(result[0], result[1], result[2], str(result[3])))
+            table.add_row([result[0], result[1], result[2], str(result[3].year)])
+        print(table)
         
     except Exception as e:
         print(e)
