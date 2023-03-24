@@ -12,6 +12,7 @@ from auth import signup, login
 from games import rate, playRandom, playChosen
 from friends import friend, unfriend
 from collection import createCollection, viewCollections, renameCollection, deleteCollection, addToCollection, removeFromCollection
+from search import search, sort
 
 load_dotenv()
 
@@ -60,6 +61,8 @@ try:
                 print("viewCollection")
                 print("addGame")
                 print("removeGame")
+                print("search")
+                print("sort")
                 print("quit")
                 continue
             elif command == '':
@@ -161,21 +164,34 @@ try:
                 viewCollections(curs, user_name)
                 curs.close()
                 continue
-            if command.startswith('addGame'):
-                curs = conn.cursor()
+            elif command.startswith('addGame'):
                 if user_name == None:
                     print("Please login first.")
                     continue
+                curs = conn.cursor()
                 addToCollection(curs, user_name)
                 curs.close()
                 continue
-            if command.startswith('removeGame'):
-                curs = conn.cursor()
+            elif command.startswith('removeGame'):
                 if user_name == None:
                     print("Please login first.")
                     continue
+                curs = conn.cursor()
                 removeFromCollection(curs, user_name)
                 curs.close()
+                continue
+            elif command.startswith('search'):
+                curs = conn.cursor()
+                search(curs)
+                curs.close()
+                continue
+            elif command.startswith('sort'):
+                curs = conn.cursor()
+                sort(curs)
+                curs.close()
+                continue
+            else:
+                print("Invalid command, type help for a list of commands or quit to quit")
                 continue
         conn.close()
         print("Database connection closed")
