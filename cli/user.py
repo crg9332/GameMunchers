@@ -10,23 +10,23 @@ from prettytable import ALL as ALL
 def profile(curs, username):
     try:
         # Get the number of collections
-        curs.execute("SELECT COUNT(*) FROM Collection WHERE username = '%s';" % username)
+        curs.execute("SELECT COUNT(*) FROM Collection WHERE username = %s;", (username,))
         numCollections = curs.fetchone()[0]
         # Get the number of followers
-        curs.execute("SELECT COUNT(*) FROM Friends WHERE friendee = '%s';" % username)
+        curs.execute("SELECT COUNT(*) FROM Friends WHERE friendee = %s;", (username,))
         numFollowers = curs.fetchone()[0]
         # Get the number of following
-        curs.execute("SELECT COUNT(*) FROM Friends WHERE friender = '%s';" % username)
+        curs.execute("SELECT COUNT(*) FROM Friends WHERE friender = %s;", (username,))
         numFollowing = curs.fetchone()[0]
         # Get the top 10 games by highest rating
         curs.execute("SELECT g.gameTitle, ROUND(AVG(r.starrating), 1)\
                     FROM Games g\
                     LEFT JOIN starrating r ON g.gameID = r.gameID\
                     JOIN incollection c ON g.gameID = c.gameID\
-                    WHERE c.username = '%s'\
+                    WHERE c.username = %s\
                     GROUP BY g.gameTitle\
                     ORDER BY COALESCE(ROUND(AVG(r.starrating), 1), 0) DESC\
-                    LIMIT 10;" % username)
+                    LIMIT 10;", (username,))
         topRatedGames = curs.fetchall()
         # Get the top 10 games by most playtime
         curs.execute("SELECT g.gameTitle, COALESCE(SUM(p.timeplayed), make_interval(secs => 0))\
@@ -55,7 +55,7 @@ def profile(curs, username):
         topRatedPlayedGames = curs.fetchall()
 
         # Create table
-        table = PrettyTable()
+        table = PrettyTable(hrules=ALL)
         table.field_names = ["Number of Collections", "Number of Followers", "Number of Following"]
         table.add_row([numCollections, numFollowers, numFollowing])
         print(table)
