@@ -35,7 +35,23 @@ def recommend(curs):
         print("\nTop 20 games amongst friends: ")
         print(table2)
 
-
+        #### Top 5 releases of the Month (month and year chosen based on month with highest amount of releases) ####
+        curs.execute("SELECT g.gametitle, justify_interval(SUM(gs.timeplayed)) AS playedtime\
+                    FROM releasegame rg\
+                    JOIN gamesession gs on rg.gameid = gs.gameid\
+                    JOIN games g on g.gameid = gs.gameid\
+                    WHERE date_trunc('month', rg.releasedate) = '2009-11-01'\
+                    GROUP BY g.gametitle\
+                    ORDER BY playedtime DESC\
+                    LIMIT 5;")
+        topFive = curs.fetchall()
+        table3 = PrettyTable(hrules = ALL)
+        table3.field_names = ["Title"]
+        table3.align["Title"] = "l"
+        for game in topFive:
+            table3.add_row([game[0]])
+        print("\nTop 5 games released of the month with most released games:")
+        print(table3)
     except Exception as e:
         print(e)
         curs.execute("ROLLBACK")
