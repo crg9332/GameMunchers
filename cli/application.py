@@ -13,6 +13,7 @@ from games import rate, playRandom, playChosen
 from friends import friend, unfriend
 from collection import createCollection, viewCollections, renameCollection, deleteCollection, addToCollection, removeFromCollection
 from search import search, sort
+from recommend import recommend
 
 load_dotenv()
 
@@ -64,6 +65,7 @@ try:
                 print("search")
                 print("sort")
                 print("quit")
+                print("recommend")
                 continue
             elif command == '':
                 continue
@@ -188,6 +190,11 @@ try:
             elif command.startswith('sort'):
                 curs = conn.cursor()
                 sort(curs)
+                curs.close()
+                continue
+            elif command.startswith('recommend'):
+                curs = conn.cursor()
+                recommend(curs)
                 curs.close()
                 continue
             else:
