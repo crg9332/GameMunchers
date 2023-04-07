@@ -194,7 +194,7 @@ try:
                 continue
             elif command.startswith('recommend'):
                 curs = conn.cursor()
-                recommend(curs)
+                recommend(curs, user_name)
                 curs.close()
                 continue
             else:
