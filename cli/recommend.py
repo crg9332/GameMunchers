@@ -69,6 +69,10 @@ def recommend(curs, username):
         for game in userGames:
             userGamesSet.append(game[0])
 
+        if userGamesSet == None:
+            print("Play games to be recommened more games")
+            return
+
         # Get the most played games of the same genre
         curs.execute("SELECT gs.gameid, g.gametitle, SUM(gs.timeplayed) AS playedtime \
                     FROM gamesession AS gs \
