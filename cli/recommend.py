@@ -19,22 +19,6 @@ def recommend(curs, username):
         print("Top 20 Games in the last 90 days:")
         print(table1)
 
-        ##### top 20 games amongst friends ####
-        curs.execute("SELECT g.gametitle, justify_interval(SUM(gs.timeplayed)) AS playedtime FROM friends f \
-                      JOIN gamesession gs on f.friender = 'kfennellyes' \
-                      JOIN games g on gs.gameid = g.gameid \
-                      GROUP BY g.gametitle \
-                      ORDER BY playedtime DESC \
-                     LIMIT 20;")
-        topGamesFriends = curs.fetchall()
-        table2 = PrettyTable(hrules = ALL)
-        table2.field_names = ["Title"]
-        table2.align["Title"] = "l"
-        for game in topGamesFriends:
-            table2.add_row([game[0]])
-        print("\nTop 20 games amongst friends: ")
-        print(table2)
-
         #### Top 5 releases of the Month (month and year chosen based on month with highest amount of releases) ####
         curs.execute("SELECT g.gametitle, justify_interval(SUM(gs.timeplayed)) AS playedtime\
                     FROM releasegame rg\
@@ -101,6 +85,27 @@ def recommend(curs, username):
             numGames += 1
         print("\nFor You:")
         print(table4)
+
+        ##### top 20 games amongst friends ####
+        curs.execute("SELECT g.gameTitle, justify_interval(SUM(gs.timePlayed)) AS playtime \
+                    FROM Games g \
+                    JOIN GameSession gs ON g.gameID = gs.gameID \
+                    JOIN friends f ON gs.username = f.friendee \
+                    WHERE f.friender = %s \
+                    GROUP BY g.gameTitle \
+                    ORDER BY playtime DESC \
+                    LIMIT 20;", (username,))
+        topGamesFriends = curs.fetchall()
+        if len(topGamesFriends) == 0:
+            print("YOU HAVE NO FRIENDS LOSER!")
+            return
+        table2 = PrettyTable(hrules = ALL)
+        table2.field_names = ["Title"]
+        table2.align["Title"] = "l"
+        for game in topGamesFriends:
+            table2.add_row([game[0]])
+        print("\nTop 20 games amongst friends: ")
+        print(table2)
     except Exception as e:
         print(e)
         curs.execute("ROLLBACK")
