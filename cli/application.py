@@ -13,6 +13,7 @@ from games import rate, playRandom, playChosen
 from friends import friend, unfriend
 from collection import createCollection, viewCollections, renameCollection, deleteCollection, addToCollection, removeFromCollection
 from search import search, sort
+from user import profile
 
 load_dotenv()
 
@@ -63,6 +64,7 @@ try:
                 print("removeGame")
                 print("search")
                 print("sort")
+                print("profile")
                 print("quit")
                 continue
             elif command == '':
@@ -188,6 +190,14 @@ try:
             elif command.startswith('sort'):
                 curs = conn.cursor()
                 sort(curs)
+                curs.close()
+                continue
+            elif command.startswith('profile'):
+                if user_name == None:
+                    print("Please login first.")
+                    continue
+                curs = conn.cursor()
+                profile(curs, user_name)
                 curs.close()
                 continue
             else:

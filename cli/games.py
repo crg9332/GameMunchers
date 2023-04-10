@@ -64,6 +64,9 @@ def playRandom(curs, username):
 
         # Prompt user for amount of timeplayed and calculate end dateTime
         timePlayed = int(input("How long do you want to play {0} for (in minutes)? ".format(gameTitle[0][0])))
+        if timePlayed <= 0:
+            print("Time played must be greater than 0")
+            return
         startDateTime = datetime.now()
         endDateTime = startDateTime + timedelta(minutes=timePlayed)
 
@@ -99,6 +102,9 @@ def playChosen(curs, username):
         
         # Prompt user for amount of timeplayed and calculate end dateTime
         timePlayed = int(input("How long do you want to play {0} for (in minutes)? ".format(gameTitle)))
+        if timePlayed <= 0:
+            print("Time played must be greater than 0")
+            return
         startDateTime = datetime.now()
         endDateTime = startDateTime + timedelta(minutes=timePlayed)
 
