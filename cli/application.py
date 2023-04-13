@@ -13,6 +13,7 @@ from games import rate, playRandom, playChosen
 from friends import friend, unfriend
 from collection import createCollection, viewCollections, renameCollection, deleteCollection, addToCollection, removeFromCollection
 from search import search, sort
+from recommend import recommend
 from user import profile
 
 load_dotenv()
@@ -40,7 +41,7 @@ try:
         }
         conn = psycopg2.connect(**params)
         print("Database connection established")
-        print("Input commands (quit to exit, help for help):")
+        print("Input commands (quit to exit, help for help):", end='')
         while True:
             print()
             command = input("> ")
@@ -62,6 +63,7 @@ try:
                 print("viewCollection")
                 print("addGame")
                 print("removeGame")
+                print("recommend")
                 print("search")
                 print("sort")
                 print("profile")
@@ -192,6 +194,9 @@ try:
                 sort(curs)
                 curs.close()
                 continue
+            elif command.startswith('recommend'):
+                curs = conn.cursor()
+                recommend(curs, user_name)
             elif command.startswith('profile'):
                 if user_name == None:
                     print("Please login first.")
