@@ -1,0 +1,639 @@
+// @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300&display=swap');
+// @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500&display=swap');
+
+// make the font 'Outfit' in the whole app
+body {
+  font-family: 'Outfit', sans-serif;
+  color: #fff;
+}
+
+.main {
+  overflow: hidden;
+  color: #fff;
+  font-family: 'Outfit', sans-serif;
+  margin-top: 60px;
+  display: grid;
+  gap: 0px;
+  // grid-template-columns: 60% 40%;
+  // grid-template-rows: 10% 50% 40%;
+  // grid-template-columns: 260px 240px;
+  // grid-template-rows: 210px 250px 240px;
+  grid-template-columns: 49.2vw 32.8vw;
+  grid-template-rows: 8vh 50vh 40vh;
+  grid-template-areas:
+    "search header"
+    "main main"
+    "footer footer";
+}
+
+.app {
+  /* overflow: auto; */
+  /* box-sizing: border-box; */
+  height: 100vh;
+  display: flex;
+  // display: grid;
+  /* background-color: #141415; MAIN COLOR*/
+  /* background-color: bisque; */
+  /* background: rgb(223, 4, 10); */
+  /* background: rgb(20, 20, 21); */
+  /* background: radial-gradient( ellipse at top, rgba(223, 4, 10, 1) 0%, rgba(20, 20, 21, 1) 57%); */
+  /* filter: blur(100px); */
+  /* backdrop-filter: blur(100px); */
+  /* blur the gradient */
+  /* background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 0%, rgba(0,212,255,1) 100%); */
+
+}
+
+/* ------------------------------------Background Start---------------------------- */
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.gradient {
+  /* position: fixed; */
+  // dim the gradient
+  opacity: 1;
+  z-index: 1;
+  --size: 250px;
+  --speed: 50s;
+  --easing: cubic-bezier(0.8, 0.2, 0.2, 0.8);
+
+  width: var(--size);
+  height: var(--size);
+  filter: blur(calc(var(--size) / 5));
+  background-image: linear-gradient(hsl(158, 82, 57, 85%), hsl(252, 82, 57));
+  // background-image: linear-gradient(rgba(223, 4, 10, 85%), rgb(20, 20, 21));
+  animation: rotate var(--speed) var(--easing) alternate infinite;
+  border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+}
+
+@media (min-width: 720px) {
+  .gradient {
+    --size: 800px;
+  }
+}
+
+.gradient-body {
+  z-index: -1;
+  // background-color: #222;
+  background-color: rgb(20, 20, 21);
+  position: absolute;
+  inset: 0;
+  display: flex;
+  // place-content: center;
+  // align-items: center;
+  // position content in top left
+  place-content: start;
+  align-items: start;
+  // offset content to the right
+  padding: 50px 0 0 300px;
+  overflow: hidden;
+}
+
+/* This is just to transition when you change the viewport size. */
+* {
+  transition: all 0.25s ease-out;
+}
+
+/* ------------------------------------Background End---------------------------- */
+
+.container {
+  margin-top: 50px;
+}
+
+.heading {
+  font-size: 3em;
+  font-weight: 500;
+  // center the text
+  text-align: center;
+  // justify-self: center;
+  /* font-weight: 300;
+  text-align: center;
+  color: #333;
+  margin-bottom: 2em; */
+}
+
+/* .form {
+    margin:auto;
+    width: 80%;
+} */
+
+.sidenav {
+  height: 100%;
+  width: 18%;
+  /* position: fixed; */
+  z-index: 1;
+  top: 0;
+  left: 0;
+  /* background-color: #232323; */
+  // background-color: blueviolet;
+  transition: .5s ease;
+  overflow-x: hidden;
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sidenav-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  /* font-family: 'Outfit', sans-serif; */
+  /* font-size: large; */
+  /* font-weight: 500; */
+  /* use font 'Outfit' with weight 500 */
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.2em;
+  font-weight: 300;
+}
+
+.my-nav-link {
+  color: #fff;
+  text-decoration: none;
+  font-size: 1.2em;
+  font-weight: 300;
+  margin-bottom: 1em;
+}
+
+.my-nav-link.active {
+  // color: #ff6b27;
+  color: hsl(158, 82, 57, 85%);
+  text-decoration: none;
+  font-size: 1.2em;
+  font-weight: 500;
+  margin-bottom: 1em;
+}
+
+.sidenav-nav a:hover {
+  // color: #ff6b27;
+  color: hsl(158, 82, 57, 85%);
+  text-decoration: none;
+  font-size: 1.2em;
+  font-weight: 300;
+  margin-bottom: 1em;
+}
+
+.my-navbar-brand {
+  color: #fff;
+  text-decoration: none;
+  font-size: 1.5em;
+  font-weight: 700;
+  margin-bottom: 2em;
+  margin-top: 1.5em;
+  justify-self: center;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  gap: 0.2em;
+}
+
+.search {
+  // margin-top: 1em;
+  margin-bottom: 2em;
+  grid-area: search;
+  // width: 100rem;
+}
+
+.input-search {
+  width: 60%;
+  height: 2.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0 1rem;
+  font-size: 1.2rem;
+  outline: none;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+  opacity: 0.7;
+  transition: all 0.3s ease;
+  // change color of search box
+  // background-color: #3E3239;
+  background-color: #1E1E1E;
+  // change color of placeholder text
+  color: #B8B1B4;
+}
+
+// input {
+//   width: 60%;
+//   height: 2.5rem;
+//   border: none;
+//   border-radius: 0.5rem;
+//   padding: 0 1rem;
+//   font-size: 1.2rem;
+//   outline: none;
+//   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+//   opacity: 0.7;
+//   transition: all 0.3s ease;
+//   // change color of search box
+//   // background-color: #3E3239;
+//   background-color: #1E1E1E;
+//   // change color of placeholder text
+//   color: #B8B1B4;
+// }
+
+.input-search:focus {
+  opacity: 1;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2);
+}
+
+// -----------------------------Login Start---------------------------
+
+.my-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  // border: 1px solid #1E1E1E;
+  padding: 1rem;
+
+  // position: relative;
+  // width: 400px;
+  // height: 450px;
+  // background: red;
+  // display: flex;
+  // justify-content: center;
+  // align-items: center;
+}
+
+.form-box {
+  position: relative;
+  width: 400px;
+  height: 450px;
+  // background: #333;
+  // background: #1E1E1E;
+  // background-color: #1E1E1E;
+  background: transparent;
+  backdrop-filter: blur(100px);
+  // border: 2px solid rgba(255,255,255,0.5);
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+// .form-box::before,
+// .form-box::after {
+//   content: '';
+//   position: absolute;
+//   width: 410px;
+//   height: 460px;
+//   background-image: linear-gradient(45deg,
+//       hsl(158deg 62% 51%) 0%,
+//       hsl(169deg 64% 51%) 11%,
+//       hsl(179deg 67% 52%) 22%,
+//       hsl(190deg 68% 53%) 33%,
+//       hsl(200deg 71% 53%) 44%,
+//       hsl(210deg 73% 54%) 56%,
+//       hsl(221deg 75% 55%) 67%,
+//       hsl(231deg 77% 55%) 78%,
+//       hsl(242deg 79% 56%) 89%,
+//       hsl(252deg 82% 57%) 100%);
+//   // background-size: 400%;
+//   z-index: -1;
+//   background-size: 300%;
+//   // animation: animate 10s linear infinite;
+//   animation: Move 5s linear infinite;
+// }
+
+.form-box::before,.form-box::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 2px solid rgba(255,255,255,0.5);
+  background: #1E1E1E;
+  border-radius: 20px;
+  z-index: -1;
+  transition: 0.5s;
+}
+
+// .form-box::after {
+//   // filter: blur(20px);
+//   filter: blur(15px);
+// }
+
+@keyframes Move {
+  0% {
+    background-position: 0;
+  }
+  50% {
+    background-position: 100%;
+  }
+  100% {
+    background-position: 0;
+  }
+}
+
+form {
+  // --text-color: #dd1414;
+  // --text-color: hsl(158, 82, 57, 85%);
+  // --text-color: #33CF97;
+  --text-color: #fff;
+  max-width: 500px;
+  z-index: 1;
+}
+
+.field-login {
+  width: 100%;
+  // overflow: auto;
+  position: relative;
+  border-bottom: 2px dashed var(--text-color);
+  margin: 4rem auto 1rem;
+}
+
+.label-login {
+  color: var(--text-color);
+  font-size: 1.2rem;
+  display: block;
+}
+
+.input-login {
+  outline: none;
+  border: none;
+  overflow: hidden;
+  margin: 0;
+  width: 100%;
+  padding: 0.25rem 0;
+  background: none;
+  color: white;
+  font-size: 1.2rem;
+  font-weight: 500;
+  // turn off autocomplete
+  // autocomplete: off;  
+
+}
+
+// use valid and invalid when checking email address in signup
+.input-login:valid {
+  // color: yellowgreen;
+  color: #33CF97;
+}
+
+// .input-login:invalid {
+//   color: orangered;
+// }
+
+// Border animation
+.field-login::after {
+  content: "";
+  position: relative;
+  display: block;
+  height: 4px;
+  // background: #d16dff;
+  // make the background a gradient
+  // background: linear-gradient(to right, #33CF97, #d16dff);
+  // background: linear-gradient(to right, #33CF97, #5B37EB);
+  background-image: linear-gradient(45deg,
+      hsl(158deg 62% 51%) 0%,
+      hsl(169deg 64% 51%) 11%,
+      hsl(179deg 67% 52%) 22%,
+      hsl(190deg 68% 53%) 33%,
+      hsl(200deg 71% 53%) 44%,
+      hsl(210deg 73% 54%) 56%,
+      hsl(221deg 75% 55%) 67%,
+      hsl(231deg 77% 55%) 78%,
+      hsl(242deg 79% 56%) 89%,
+      hsl(252deg 82% 57%) 100%);
+  background-size: 300%;
+  animation: Move 5s linear infinite;
+  transform: scaleX(0);
+  transform-origin: 0%;
+  transition: transform 500ms ease;
+  top: 2px;
+}
+
+.field-login:focus-within {
+  // border-bottom: 2px solid #d16dff;
+  border-color: transparent;
+}
+
+// scale X to 1 for field-login::after when focused
+.field-login:focus-within::after {
+  transform: scaleX(1);
+  // animate gradient
+}
+
+// changes color of username and password labels
+// .input-login:focus + .label {
+//   color: #d16dff;
+// }
+
+// label animation
+.label-login {
+  z-index: -1;
+  position: absolute;
+  transform: translateY(-2rem);
+  transform-origin: 0%;
+  transition: transform 400ms;
+}
+
+.field-login:focus-within .label-login,
+.input-login:valid+.label-login {
+  transform: scale(0.8) translateY(-5rem);
+  // opacity: 1;
+}
+
+.submit {
+  display: flex;
+  justify-content: center;
+  // padding: 0.5rem 1rem;
+  margin: 1.5rem auto;
+}
+
+.submit-login {
+  // background: #d16dff;
+  // background: linear-gradient(to right, #33CF97, #d16dff);
+  // background: linear-gradient(to right, #33CF97, #5B37EB);
+  background-image: linear-gradient(45deg,
+      hsl(158deg 62% 51%) 0%,
+      hsl(169deg 64% 51%) 11%,
+      hsl(179deg 67% 52%) 22%,
+      hsl(190deg 68% 53%) 33%,
+      hsl(200deg 71% 53%) 44%,
+      hsl(210deg 73% 54%) 56%,
+      hsl(221deg 75% 55%) 67%,
+      hsl(231deg 77% 55%) 78%,
+      hsl(242deg 79% 56%) 89%,
+      hsl(252deg 82% 57%) 100%);
+  background-size: 300%;
+  animation: Move 5s linear infinite;
+  border: none;
+  outline: none;
+  padding: 0.5rem 1rem;
+  margin: 0;
+  border-radius: 0.5rem;
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.5s;
+  width: 80%;
+}
+
+.signup-text {
+  text-align: center;
+  color: #fff;
+  font-size: 1.2rem;
+  margin-top: 1rem;
+}
+
+// -----------------------------Login End---------------------------
+
+.results {
+  grid-area: main;
+  // margin-top: 1em;
+  margin-bottom: 2em;
+  // margin-top: 0px;
+}
+
+.about:hover {
+  transition: all 2s ease-in-out;
+  animation-name: forwards;
+  animation-duration: 2s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+.about {
+  // overflow: auto;
+  background-color: #1E1E1E;
+  // set the background to a gradient
+  // background: linear-gradient(to right, #141415, hsl(252, 82, 57), #141415, hsl(158, 82, 57, 85%));
+  display: grid;
+  // border: 1px solid #ccc;
+  // border: 1px solid hsl(252, 82, 57);
+  // make the border color a gradient from hsl(158, 82, 57, 85%) to hsl(252, 82, 57)
+  border: 1px solid hsl(158, 82, 57, 85%);
+  border-image: linear-gradient(to right, hsl(158, 82, 57, 85%), hsl(252, 82, 57)) 1;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+  width: 90%;
+  // grid-template-columns: 30% 30% 30%;
+  grid-template-columns: 2fr 1fr 1fr 2fr;
+  grid-template-areas:
+    "title release rating pub"
+    "platform playtime rating dev";
+  // let animation finish after mouse leaves
+  // transition: all 0.5s ease;
+  transition: all 2s ease-in-out;
+  // animation: rotate 10s linear infinite;
+  animation-name: reverse;
+  animation-duration: 1s;
+}
+
+// create an animation which rotates the border gradient on hover
+// .about:hover {
+//   border-image: linear-gradient(to right, hsl(252, 82, 57), hsl(158, 82, 57, 85%)) 1;
+//   animation: rotate 2s linear infinite;
+//   transition: all 0.5s ease-in-out;
+// }
+// on hover, reverse the direction of the animation and make it faster
+// .about:hover {
+//   // border-image: linear-gradient(to right, hsl(252, 82, 57), hsl(158, 82, 57, 85%)) 1;
+//   // animation: rotate 2s linear infinite reverse;
+//   animation-direction: reverse;
+//   animation-duration: 5s;
+// }
+
+// create the animation
+// @keyframes rotate {
+//   0% {
+//     border-image: linear-gradient(to right, hsl(158, 82, 57, 85%), hsl(252, 82, 57)) 1;
+//   }
+//   50% {
+//     border-image: linear-gradient(to right, hsl(252, 82, 57), hsl(158, 82, 57, 85%)) 1;
+//   }
+//   100% {
+//     border-image: linear-gradient(to right, hsl(158, 82, 57, 85%), hsl(252, 82, 57)) 1;
+//   }
+// }
+
+// create the animation
+@keyframes reverse {
+  0% {
+    border-image: linear-gradient(to right, hsl(158, 82, 57, 85%), hsl(252, 82, 57)) 1;
+  }
+
+  50% {
+    border-image: linear-gradient(to right, hsl(252, 82, 57), hsl(158, 82, 57, 85%)) 1;
+  }
+
+  100% {
+    border-image: linear-gradient(to right, hsl(158, 82, 57, 85%), hsl(252, 82, 57)) 1;
+  }
+}
+
+@keyframes forwards {
+  0% {
+    border-image: linear-gradient(to right, hsl(158, 82, 57, 85%), hsl(252, 82, 57)) 1;
+  }
+
+  50% {
+    border-image: linear-gradient(to right, hsl(252, 82, 57), hsl(158, 82, 57, 85%)) 1;
+  }
+
+  100% {
+    border-image: linear-gradient(to right, hsl(158, 82, 57, 85%), hsl(252, 82, 57)) 1;
+  }
+}
+
+// make it so the border gradient does not snap back to the original color when the mouse leaves the element
+
+.game {
+  grid-area: title;
+  color: hsl(158, 82, 57, 85%);
+  // font-size: 1.2em;
+  font-weight: 500;
+}
+
+.gameplatform {
+  grid-area: platform;
+  font-weight: 300;
+}
+
+.gameReleaseDate {
+  grid-area: release;
+  // put text in middle of cell
+  justify-self: center;
+  font-weight: 300;
+}
+
+.gamePlayTime {
+  grid-area: playtime;
+  justify-self: center;
+  font-weight: 300;
+}
+
+.gamerating {
+  grid-area: rating;
+  font-weight: 300;
+  // change the text color depending on how good or bad the rating is
+  // color: hsl(0, 100%, 50%);
+}
+
+.gameDevs {
+  grid-area: dev;
+  font-weight: 300;
+}
+
+.gamePub {
+  grid-area: pub;
+  font-weight: 300;
+}
+
+#logout {
+  // move to bottom of vertical nav bar
+  margin-top: 50vh;
+  // margin-top: 200%;
+  box-sizing: border-box;
+}
