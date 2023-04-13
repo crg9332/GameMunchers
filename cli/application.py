@@ -41,7 +41,7 @@ try:
         }
         conn = psycopg2.connect(**params)
         print("Database connection established")
-        print("Input commands (quit to exit, help for help):")
+        print("Input commands (quit to exit, help for help):", end='')
         while True:
             print()
             command = input("> ")
@@ -63,11 +63,11 @@ try:
                 print("viewCollection")
                 print("addGame")
                 print("removeGame")
+                print("recommend")
                 print("search")
                 print("sort")
                 print("profile")
                 print("quit")
-                print("recommend")
                 continue
             elif command == '':
                 continue

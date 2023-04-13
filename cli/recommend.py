@@ -41,70 +41,98 @@ def recommend(curs, username):
         if username == None:
             print("\nLogin in for personalized recommendations!")
             return
+        
+        # Get the most played game
         curs.execute("SELECT gameid, SUM(timeplayed) AS playtime \
                     FROM gamesession \
                     WHERE username = %s \
                     GROUP BY gameid \
-                    ORDER BY playtime DESC", (username,))
-        userGames = curs.fetchall()
+                    ORDER BY playtime DESC \
+                    LIMIT 1;", (username,))
+        topGame = curs.fetchall()
 
-        # Add games to list so no repeat games are recommended
-        userGamesSet = []
-        for game in userGames:
-            userGamesSet.append(game[0])
+        userGamesSet = None # setting to none before if statement for efficiency when recommending based on friends
 
-        if userGamesSet == None:
-            print("Play games to be recommened more games")
-            return
+        if len(topGame) == 0:
+            print("\nPlay games for personalized recommendations to become available")
+        else:
+            topGameID = topGame[0][0]
+            
+            # Get the most played games of the genre of user's most played game
+            curs.execute("SELECT gs.gameid, g.gametitle, SUM(gs.timeplayed) AS playedtime \
+                        FROM gamesession AS gs \
+                        INNER JOIN gamesgenre AS gg ON gs.gameid = gg.gameid \
+                        INNER JOIN games g on g.gameid = gg.gameid \
+                        WHERE gg.genreid = ( \
+                        SELECT genreid \
+                        FROM gamesgenre \
+                        WHERE gameid = %s \
+                        ) \
+                        GROUP BY gs.gameid, g.gametitle \
+                        ORDER BY playedtime DESC", (topGameID,))
+            similarGames = curs.fetchall()
 
-        # Get the most played games of the same genre
-        curs.execute("SELECT gs.gameid, g.gametitle, SUM(gs.timeplayed) AS playedtime \
-                    FROM gamesession AS gs \
-                    INNER JOIN gamesgenre AS gg ON gs.gameid = gg.gameid \
-                    INNER JOIN games g on g.gameid = gg.gameid \
-                    WHERE gg.genreid = ( \
-                      SELECT genreid \
-                      FROM gamesgenre \
-                      WHERE gameid = %s \
-                    ) \
-                    GROUP BY gs.gameid, g.gametitle \
-                    ORDER BY playedtime DESC", (userGamesSet[0],))
-        similarGames = curs.fetchall()
+            # get a list of all games user has in collections
+            curs.execute("SELECT gameid FROM incollection WHERE username = %s", (username,))
+            userGames = curs.fetchall()
+            userGamesSet = set()
+            for game in userGames:
+                userGamesSet.add(game[0])
 
-        # Construct table for recommended games based on genre most played by user limit to 20
-        table4 = PrettyTable(hrules = ALL)
-        table4.field_names = ["Title"]
-        table4.align["Title"] = "l"
-        numGames = 0
-        for game in similarGames:
-            if numGames == 20:
-                break
-            if game[0] in userGamesSet:
-                continue
-            table4.add_row([game[1]])
-            numGames += 1
-        print("\nFor You:")
-        print(table4)
+            # Construct table for recommended games based on genre most played by user limit to 20
+            table4 = PrettyTable(hrules = ALL)
+            table4.field_names = ["Title"]
+            table4.align["Title"] = "l"
+            numGames = 0
+            for game in similarGames:
+                if numGames == 20:
+                    break
+                if game[0] in userGamesSet:
+                    continue
+                table4.add_row([game[1]])
+                numGames += 1
+            print("\nTop 20 Games of your most played Genre:")
+            print(table4)
 
         ##### top 20 games amongst friends ####
-        curs.execute("SELECT g.gameTitle, justify_interval(SUM(gs.timePlayed)) AS playtime \
+        curs.execute("SELECT g.gameid, g.gameTitle, justify_interval(SUM(gs.timePlayed)) AS playtime \
                     FROM Games g \
                     JOIN GameSession gs ON g.gameID = gs.gameID \
                     JOIN friends f ON gs.username = f.friendee \
                     WHERE f.friender = %s \
-                    GROUP BY g.gameTitle \
-                    ORDER BY playtime DESC \
-                    LIMIT 20;", (username,))
+                    GROUP BY g.gameid, g.gameTitle \
+                    ORDER BY playtime DESC;", (username,))
         topGamesFriends = curs.fetchall()
         if len(topGamesFriends) == 0:
-            print("YOU HAVE NO FRIENDS LOSER!")
+            # Check if user has friends
+            curs.execute("SELECT * FROM friends WHERE friender = %s", (username,))
+            friends = curs.fetchall()
+            if len(friends) == 0:
+                print("\nYou have no friends! Go make some friends!")
+            else:
+                print("\nYour friends have not played any games!")
             return
+        
+        if userGamesSet == None: # now you only have to query once if genre recommend works
+            # get a list of all games user has in collections
+            curs.execute("SELECT gameid FROM incollection WHERE username = %s", (username,))
+            userGames = curs.fetchall()
+            userGamesSet = set()
+            for game in userGames:
+                userGamesSet.add(game[0])
+        
         table2 = PrettyTable(hrules = ALL)
         table2.field_names = ["Title"]
         table2.align["Title"] = "l"
+        numGames = 0
         for game in topGamesFriends:
-            table2.add_row([game[0]])
-        print("\nTop 20 games amongst friends: ")
+            if numGames == 20:
+                break
+            if game[0] in userGamesSet:
+                continue
+            table2.add_row([game[1]])
+            numGames += 1
+        print("\nTop 20 unowned games amongst friends: ")
         print(table2)
     except Exception as e:
         print(e)
