@@ -4,6 +4,9 @@ language: python3
 author: Dara Prak, Lucie Lim, Colin Gladden
 description: All functions relating to collections
 """
+from prettytable import PrettyTable
+from prettytable import ALL as ALL
+
 # Create a collection
 def createCollection(curs, username):
     title = input("Enter the name of the collection: ")
@@ -96,6 +99,10 @@ def viewCollections(curs, username):
             print(f"Showing 1 collection for {username}:")
         else:
             print(f"Showing {count} collections for {username}:")
+        # Set up the table
+        table = PrettyTable(hrules=ALL)
+        table.field_names = ["Collection Name", "Number of Games", "Total Time Played"]
+
         # for every collection we show the collection name, num of games in collection, & total time played of the games
         for collection in collections:
             collectionID = collection[0]
@@ -106,17 +113,12 @@ def viewCollections(curs, username):
             # gets the total time played in a collection for a given user
             curs.execute("SELECT SUM(timeplayed) FROM gamesession WHERE gameid IN (SELECT gameid FROM incollection WHERE collectionid = %s) AND username = %s", (collectionID, username))
             totalPlayedSession = curs.fetchone()
-            # prints out the collection info
-            print("-"*50)
-            print(f"Collection Name: {title}")
-            print(f"Total Number of Games: {gameCount[0]}")
+            # adds the collection info to the table
             if totalPlayedSession[0] != None:
-                # print(f"Total Time Played: {totalPlayedSession[0].seconds//3600} hours {(totalPlayedSession[0].seconds//60)%60} minutes")
-                # Use total_seconds instead of seconds to get the total time in seconds
-                print(f"Total Time Played: {int(totalPlayedSession[0].total_seconds()//3600)} hours {int((totalPlayedSession[0].total_seconds()//60)%60)} minutes")
+                table.add_row([title, gameCount[0], f"{int(totalPlayedSession[0].total_seconds()//3600)} hours {int((totalPlayedSession[0].total_seconds()//60)%60)} minutes"])
             else:
-                print(f"Total Time Played: 0 hours 0 minutes")
-        print("-"*50)
+                table.add_row([title, gameCount[0], "0 hours 0 minutes"])
+        print(table)
 
     except Exception as e:
         print(e)

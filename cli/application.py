@@ -14,6 +14,7 @@ from friends import friend, unfriend
 from collection import createCollection, viewCollections, renameCollection, deleteCollection, addToCollection, removeFromCollection
 from search import search, sort
 from recommend import recommend
+from user import profile
 
 load_dotenv()
 
@@ -64,6 +65,7 @@ try:
                 print("removeGame")
                 print("search")
                 print("sort")
+                print("profile")
                 print("quit")
                 print("recommend")
                 continue
@@ -195,6 +197,12 @@ try:
             elif command.startswith('recommend'):
                 curs = conn.cursor()
                 recommend(curs, user_name)
+            elif command.startswith('profile'):
+                if user_name == None:
+                    print("Please login first.")
+                    continue
+                curs = conn.cursor()
+                profile(curs, user_name)
                 curs.close()
                 continue
             else:
