@@ -1,2 +1,4 @@
 cli/.env
 cli/__pycache__/
+backend/.env
+backend/__pycache__/
