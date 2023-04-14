@@ -1,20 +1,20 @@
-# Game Munchers
+## Game Munchers
 
-## Summary
+### Summary
 A database based application focused on the video game industry. Application is functionally similar to Steam. This application can be run in the form of a web application or a command line interface.
 
-# Project Status
+## Project Status
 The command line interface is fully functional. The web application is currently in development.
 
-# Project Screen Shot(s)
+## Project Screen Shot(s)
 
 [ coming soon ]
 
-# Installation and Setup Instructions
+## Installation and Setup Instructions
 
 Clone this repository. You will need `node` and `npm` installed globally on your machine.  
 
-### Installation:
+#### Installation:
 ---
 
 `pip install -r requirements.txt`
@@ -23,11 +23,12 @@ Clone this repository. You will need `node` and `npm` installed globally on your
 
 `npm install`  
 
-### Setup:
+#### Setup:
 ---
 
-#### Setup the `.env` files in `/cli` and `/backend`. 
-#### The `.env` files should be in the following format
+ Setup the `.env` files in `/cli` and `/backend`. 
+
+The `.env` files should be in the following format
 
 For `/cli/.env`:
 ```bash
@@ -44,13 +45,13 @@ DB_NAME=p320_12
 SECRET_KEY=your_secret_key
 ```
 
-### Run:
+#### Run:
 ---
 
-#### For the Command Line Interface:
+##### For the Command Line Interface:
 Execute `python application.py` while in the `/cli` directory
 
-#### For the Web Application:
+##### For the Web Application:
 
 Execute `flask run` while in the `/backend` directory
 
