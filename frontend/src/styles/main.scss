@@ -1,8 +1,5 @@
-// @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300&display=swap');
-// @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500&display=swap');
 
-// make the font 'Outfit' in the whole app
 body {
   font-family: 'Outfit', sans-serif;
   color: #fff;
@@ -24,7 +21,7 @@ body {
   grid-template-areas:
     "search header"
     "main main"
-    "footer footer";
+    "main main";
 }
 
 .app {
@@ -58,7 +55,6 @@ body {
 
 .gradient {
   /* position: fixed; */
-  // dim the gradient
   opacity: 1;
   z-index: 1;
   --size: 250px;
@@ -120,11 +116,6 @@ body {
   margin-bottom: 2em; */
 }
 
-/* .form {
-    margin:auto;
-    width: 80%;
-} */
-
 .sidenav {
   height: 100%;
   width: 18%;
@@ -132,8 +123,6 @@ body {
   z-index: 1;
   top: 0;
   left: 0;
-  /* background-color: #232323; */
-  // background-color: blueviolet;
   transition: .5s ease;
   overflow-x: hidden;
   padding-top: 20px;
@@ -146,10 +135,6 @@ body {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  /* font-family: 'Outfit', sans-serif; */
-  /* font-size: large; */
-  /* font-weight: 500; */
-  /* use font 'Outfit' with weight 500 */
   font-family: 'Outfit', sans-serif;
   font-size: 1.2em;
   font-weight: 300;
@@ -164,7 +149,6 @@ body {
 }
 
 .my-nav-link.active {
-  // color: #ff6b27;
   color: hsl(158, 82, 57, 85%);
   text-decoration: none;
   font-size: 1.2em;
@@ -172,8 +156,7 @@ body {
   margin-bottom: 1em;
 }
 
-.sidenav-nav a:hover {
-  // color: #ff6b27;
+.sidenav-nav a:not(.active):hover {
   color: hsl(158, 82, 57, 85%);
   text-decoration: none;
   font-size: 1.2em;
@@ -195,8 +178,21 @@ body {
   gap: 0.2em;
 }
 
+.my-navbar-brand:hover {
+  color: #fff;
+  text-decoration: none;
+  font-size: 1.5em;
+  font-weight: 700;
+  margin-bottom: 2em;
+  margin-top: 1.5em;
+  justify-self: center;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  gap: 0.2em;
+}
+
 .search {
-  // margin-top: 1em;
   margin-bottom: 2em;
   grid-area: search;
   // width: 100rem;
@@ -213,8 +209,6 @@ body {
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
   opacity: 0.7;
   transition: all 0.3s ease;
-  // change color of search box
-  // background-color: #3E3239;
   background-color: #1E1E1E;
   // change color of placeholder text
   color: #B8B1B4;
@@ -252,14 +246,6 @@ body {
   transform: translate(-50%, -50%);
   // border: 1px solid #1E1E1E;
   padding: 1rem;
-
-  // position: relative;
-  // width: 400px;
-  // height: 450px;
-  // background: red;
-  // display: flex;
-  // justify-content: center;
-  // align-items: center;
 }
 
 .form-box {
@@ -278,6 +264,7 @@ body {
   align-items: center;
 }
 
+// for animated gradient background
 // .form-box::before,
 // .form-box::after {
 //   content: '';
@@ -367,14 +354,11 @@ form {
   color: white;
   font-size: 1.2rem;
   font-weight: 500;
-  // turn off autocomplete
-  // autocomplete: off;  
 
 }
 
 // use valid and invalid when checking email address in signup
 .input-login:valid {
-  // color: yellowgreen;
   color: #33CF97;
 }
 
@@ -382,7 +366,7 @@ form {
 //   color: orangered;
 // }
 
-// Border animation
+// Animation for line under input
 .field-login::after {
   content: "";
   position: relative;
@@ -404,7 +388,7 @@ form {
       hsl(242deg 79% 56%) 89%,
       hsl(252deg 82% 57%) 100%);
   background-size: 300%;
-  animation: Move 5s linear infinite;
+  animation: Move 5s linear infinite; // more fluid ending animation
   transform: scaleX(0);
   transform-origin: 0%;
   transition: transform 500ms ease;
@@ -412,20 +396,14 @@ form {
 }
 
 .field-login:focus-within {
-  // border-bottom: 2px solid #d16dff;
   border-color: transparent;
 }
 
 // scale X to 1 for field-login::after when focused
 .field-login:focus-within::after {
   transform: scaleX(1);
-  // animate gradient
+  // animation: Move 5s linear infinite;
 }
-
-// changes color of username and password labels
-// .input-login:focus + .label {
-//   color: #d16dff;
-// }
 
 // label animation
 .label-login {
@@ -439,7 +417,7 @@ form {
 .field-login:focus-within .label-login,
 .input-login:valid+.label-login {
   transform: scale(0.8) translateY(-5rem);
-  // opacity: 1;
+  opacity: 1;
 }
 
 .submit {
